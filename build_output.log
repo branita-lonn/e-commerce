@@ -1,0 +1,551 @@
+
+> single-seller@0.1.0 build
+> next build
+
+▲ Next.js 16.2.4 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 25 errors:
+./app/dashboard/layout.tsx:5:1
+Module not found: Can't resolve '@/auth'
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { redirect } [36mfrom[0m [32m"next/navigation"[0m;
+[31m[1m>[0m [90m5 |[0m [36mimport[0m { auth } [36mfrom[0m [32m"@/auth"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m6 |[0m [36mimport[0m { prisma } [36mfrom[0m [32m"@/lib/prisma"[0m;
+  [90m7 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m"next/link"[0m;
+  [90m8 |[0m [36mimport[0m { [33mLayoutDashboard[0m, [33mPackage[0m, [33mTags[0m, [33mShoppingCart[0m, [33mUsers[0m, [33mBarChart[0m,.[33m..[0m
+
+Import map: aliased to relative './src/auth' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/dashboard/page.tsx:4:1
+Module not found: Can't resolve '@/auth'
+  [90m2 |[0m [90m// Seller dashboard home page[0m
+  [90m3 |[0m
+[31m[1m>[0m [90m4 |[0m [36mimport[0m { auth } [36mfrom[0m [32m"@/auth"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m5 |[0m [36mimport[0m { [33mCard[0m, [33mCardContent[0m, [33mCardHeader[0m, [33mCardTitle[0m } [36mfrom[0m [32m"@/components/...[0m
+  [90m6 |[0m [36mimport[0m { [33mDollarSign[0m, [33mShoppingBag[0m, [33mUsers[0m, [33mPackageOpen[0m } [36mfrom[0m [32m"lucide-rea...[0m
+  [90m7 |[0m
+
+Import map: aliased to relative './src/auth' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./proxy.ts:5:1
+Module not found: Can't resolve '@/auth'
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m [33mNextAuth[0m [36mfrom[0m [32m"next-auth"[0m;
+[31m[1m>[0m [90m5 |[0m [36mimport[0m { auth } [36mfrom[0m [32m"@/auth"[0m; [90m// Note: auth middleware is often import...[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m6 |[0m
+  [90m7 |[0m [90m// We export auth as middleware, but we need custom logic[0m
+  [90m8 |[0m [36mexport[0m [36mdefault[0m auth((req) => {
+
+Import map: aliased to relative './src/auth' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/layout.tsx:4:1
+Module not found: Can't resolve '@/components/providers/session-provider'
+  [90m2 |[0m [36mimport[0m { [33mInter[0m, [33mGeist[0m } [36mfrom[0m [32m"next/font/google"[0m;
+  [90m3 |[0m [36mimport[0m [32m"./globals.css"[0m;
+[31m[1m>[0m [90m4 |[0m [36mimport[0m { [33mSessionProvider[0m } [36mfrom[0m [32m"@/components/providers/session-provider"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m5 |[0m [36mimport[0m { [33mToaster[0m } [36mfrom[0m [32m"sonner"[0m;
+  [90m6 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m;
+  [90m7 |[0m
+
+Import map: aliased to relative './src/components/providers/session-provider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/auth/login/page.tsx:13:1
+Module not found: Can't resolve '@/components/ui/button'
+  [90m11 |[0m [36mimport[0m * [36mas[0m z [36mfrom[0m [32m"zod"[0m;
+  [90m12 |[0m [36mimport[0m { loginSchema } [36mfrom[0m [32m"@/lib/validations/auth"[0m;
+[31m[1m>[0m [90m13 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m14 |[0m [36mimport[0m { [33mInput[0m } [36mfrom[0m [32m"@/components/ui/input"[0m;
+  [90m15 |[0m [36mimport[0m { [33mLabel[0m } [36mfrom[0m [32m"@/components/ui/label"[0m;
+  [90m16 |[0m [36mimport[0m { [33mCard[0m, [33mCardContent[0m, [33mCardDescription[0m, [33mCardFooter[0m, [33mCardHeader[0m, [33mC...[0m
+
+Import map: aliased to relative './src/components/ui/button' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/auth/login/page.tsx [Client Component Browser]
+    ./app/auth/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/auth/login/page.tsx [Client Component SSR]
+    ./app/auth/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/auth/register/page.tsx:13:1
+Module not found: Can't resolve '@/components/ui/button'
+  [90m11 |[0m [36mimport[0m * [36mas[0m z [36mfrom[0m [32m"zod"[0m;
+  [90m12 |[0m [36mimport[0m { registerSchema } [36mfrom[0m [32m"@/lib/validations/auth"[0m;
+[31m[1m>[0m [90m13 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m14 |[0m [36mimport[0m { [33mInput[0m } [36mfrom[0m [32m"@/components/ui/input"[0m;
+  [90m15 |[0m [36mimport[0m { [33mLabel[0m } [36mfrom[0m [32m"@/components/ui/label"[0m;
+  [90m16 |[0m [36mimport[0m { [33mCard[0m, [33mCardContent[0m, [33mCardDescription[0m, [33mCardFooter[0m, [33mCardHeader[0m, [33mC...[0m
+
+Import map: aliased to relative './src/components/ui/button' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/auth/register/page.tsx [Client Component Browser]
+    ./app/auth/register/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/auth/register/page.tsx [Client Component SSR]
+    ./app/auth/register/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/dashboard/layout.tsx:10:1
+Module not found: Can't resolve '@/components/ui/button'
+  [90m 8 |[0m [36mimport[0m { [33mLayoutDashboard[0m, [33mPackage[0m, [33mTags[0m, [33mShoppingCart[0m, [33mUsers[0m, [33mBarChart[0m..[33m.[0m
+  [90m 9 |[0m [36mimport[0m { [33mSheet[0m, [33mSheetContent[0m, [33mSheetTrigger[0m } [36mfrom[0m [32m"@/components/ui/she...[0m
+[31m[1m>[0m [90m10 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mexport[0m [36mdefault[0m [36masync[0m [36mfunction[0m [33mDashboardLayout[0m({ children }: { children..[33m.[0m
+  [90m13 |[0m   [36mconst[0m session = [36mawait[0m auth();
+
+Import map: aliased to relative './src/components/ui/button' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/not-found.tsx:5:1
+Module not found: Can't resolve '@/components/ui/button'
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m"next/link"[0m;
+[31m[1m>[0m [90m5 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m6 |[0m
+  [90m7 |[0m [36mexport[0m [36mdefault[0m [36mfunction[0m [33mNotFound[0m() {
+  [90m8 |[0m   [36mreturn[0m (
+
+Import map: aliased to relative './src/components/ui/button' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/page.tsx:7:1
+Module not found: Can't resolve '@/components/ui/button'
+  [90m 5 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m"next/link"[0m;
+  [90m 6 |[0m [36mimport[0m { [33mShoppingCart[0m } [36mfrom[0m [32m"lucide-react"[0m;
+[31m[1m>[0m [90m 7 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m
+  [90m 9 |[0m [36mexport[0m [36mdefault[0m [36masync[0m [36mfunction[0m [33mHomePage[0m() {
+  [90m10 |[0m   [36mconst[0m storeSettings = [36mawait[0m prisma.storeSettings.findFirst();
+
+Import map: aliased to relative './src/components/ui/button' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/auth/login/page.tsx:16:1
+Module not found: Can't resolve '@/components/ui/card'
+  [90m14 |[0m ... [32m"@/components/ui/input"[0m;
+  [90m15 |[0m ... [32m"@/components/ui/label"[0m;
+[31m[1m>[0m [90m16 |[0m ...[33mntent[0m, [33mCardDescription[0m, [33mCardFooter[0m, [33mCardHeader[0m, [33mCardTitle[0m } [36mfrom[0m [32m"@...[0m
+  [90m   |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m17 |[0m ...[36mom[0m [32m"lucide-react"[0m;
+  [90m18 |[0m ... [32m"sonner"[0m;
+  [90m19 |[0m ...[32mt/link"[0m;
+
+Import map: aliased to relative './src/components/ui/card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/auth/login/page.tsx [Client Component Browser]
+    ./app/auth/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/auth/login/page.tsx [Client Component SSR]
+    ./app/auth/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/auth/register/page.tsx:16:1
+Module not found: Can't resolve '@/components/ui/card'
+  [90m14 |[0m ... [32m"@/components/ui/input"[0m;
+  [90m15 |[0m ... [32m"@/components/ui/label"[0m;
+[31m[1m>[0m [90m16 |[0m ...[33mntent[0m, [33mCardDescription[0m, [33mCardFooter[0m, [33mCardHeader[0m, [33mCardTitle[0m } [36mfrom[0m [32m"@...[0m
+  [90m   |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m17 |[0m ...[36mom[0m [32m"lucide-react"[0m;
+  [90m18 |[0m ... [32m"sonner"[0m;
+  [90m19 |[0m ...[32mt/link"[0m;
+
+Import map: aliased to relative './src/components/ui/card' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/auth/register/page.tsx [Client Component Browser]
+    ./app/auth/register/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/auth/register/page.tsx [Client Component SSR]
+    ./app/auth/register/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/dashboard/page.tsx:5:1
+Module not found: Can't resolve '@/components/ui/card'
+  [90m3 |[0m ...
+  [90m4 |[0m ... { auth } [36mfrom[0m [32m"@/auth"[0m;
+[31m[1m>[0m [90m5 |[0m ... { [33mCard[0m, [33mCardContent[0m, [33mCardHeader[0m, [33mCardTitle[0m } [36mfrom[0m [32m"@/components/ui/...[0m
+  [90m  |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m6 |[0m ... { [33mDollarSign[0m, [33mShoppingBag[0m, [33mUsers[0m, [33mPackageOpen[0m } [36mfrom[0m [32m"lucide-react"[0m;
+  [90m7 |[0m ...
+  [90m8 |[0m ... [36mdefault[0m [36masync[0m [36mfunction[0m [33mDashboardPage[0m() {
+
+Import map: aliased to relative './src/components/ui/card' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/auth/login/page.tsx:14:1
+Module not found: Can't resolve '@/components/ui/input'
+  [90m12 |[0m [36mimport[0m { loginSchema } [36mfrom[0m [32m"@/lib/validations/auth"[0m;
+  [90m13 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+[31m[1m>[0m [90m14 |[0m [36mimport[0m { [33mInput[0m } [36mfrom[0m [32m"@/components/ui/input"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m { [33mLabel[0m } [36mfrom[0m [32m"@/components/ui/label"[0m;
+  [90m16 |[0m [36mimport[0m { [33mCard[0m, [33mCardContent[0m, [33mCardDescription[0m, [33mCardFooter[0m, [33mCardHeader[0m, [33mC...[0m
+  [90m17 |[0m [36mimport[0m { [33mLoader2[0m } [36mfrom[0m [32m"lucide-react"[0m;
+
+Import map: aliased to relative './src/components/ui/input' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/auth/login/page.tsx [Client Component Browser]
+    ./app/auth/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/auth/login/page.tsx [Client Component SSR]
+    ./app/auth/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/auth/register/page.tsx:14:1
+Module not found: Can't resolve '@/components/ui/input'
+  [90m12 |[0m [36mimport[0m { registerSchema } [36mfrom[0m [32m"@/lib/validations/auth"[0m;
+  [90m13 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+[31m[1m>[0m [90m14 |[0m [36mimport[0m { [33mInput[0m } [36mfrom[0m [32m"@/components/ui/input"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m { [33mLabel[0m } [36mfrom[0m [32m"@/components/ui/label"[0m;
+  [90m16 |[0m [36mimport[0m { [33mCard[0m, [33mCardContent[0m, [33mCardDescription[0m, [33mCardFooter[0m, [33mCardHeader[0m, [33mC...[0m
+  [90m17 |[0m [36mimport[0m { [33mLoader2[0m } [36mfrom[0m [32m"lucide-react"[0m;
+
+Import map: aliased to relative './src/components/ui/input' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/auth/register/page.tsx [Client Component Browser]
+    ./app/auth/register/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/auth/register/page.tsx [Client Component SSR]
+    ./app/auth/register/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/auth/login/page.tsx:15:1
+Module not found: Can't resolve '@/components/ui/label'
+  [90m13 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+  [90m14 |[0m [36mimport[0m { [33mInput[0m } [36mfrom[0m [32m"@/components/ui/input"[0m;
+[31m[1m>[0m [90m15 |[0m [36mimport[0m { [33mLabel[0m } [36mfrom[0m [32m"@/components/ui/label"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m16 |[0m [36mimport[0m { [33mCard[0m, [33mCardContent[0m, [33mCardDescription[0m, [33mCardFooter[0m, [33mCardHeader[0m, [33mC...[0m
+  [90m17 |[0m [36mimport[0m { [33mLoader2[0m } [36mfrom[0m [32m"lucide-react"[0m;
+  [90m18 |[0m [36mimport[0m { toast } [36mfrom[0m [32m"sonner"[0m;
+
+Import map: aliased to relative './src/components/ui/label' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/auth/login/page.tsx [Client Component Browser]
+    ./app/auth/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/auth/login/page.tsx [Client Component SSR]
+    ./app/auth/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/auth/register/page.tsx:15:1
+Module not found: Can't resolve '@/components/ui/label'
+  [90m13 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+  [90m14 |[0m [36mimport[0m { [33mInput[0m } [36mfrom[0m [32m"@/components/ui/input"[0m;
+[31m[1m>[0m [90m15 |[0m [36mimport[0m { [33mLabel[0m } [36mfrom[0m [32m"@/components/ui/label"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m16 |[0m [36mimport[0m { [33mCard[0m, [33mCardContent[0m, [33mCardDescription[0m, [33mCardFooter[0m, [33mCardHeader[0m, [33mC...[0m
+  [90m17 |[0m [36mimport[0m { [33mLoader2[0m } [36mfrom[0m [32m"lucide-react"[0m;
+  [90m18 |[0m [36mimport[0m { toast } [36mfrom[0m [32m"sonner"[0m;
+
+Import map: aliased to relative './src/components/ui/label' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/auth/register/page.tsx [Client Component Browser]
+    ./app/auth/register/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/auth/register/page.tsx [Client Component SSR]
+    ./app/auth/register/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/dashboard/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ui/sheet'
+  [90m 7 |[0m ...[36mrt[0m [33mLink[0m [36mfrom[0m [32m"next/link"[0m;
+  [90m 8 |[0m ...[36mrt[0m { [33mLayoutDashboard[0m, [33mPackage[0m, [33mTags[0m, [33mShoppingCart[0m, [33mUsers[0m, [33mBarChart[0m,.[33m..[0m
+[31m[1m>[0m [90m 9 |[0m ...[36mrt[0m { [33mSheet[0m, [33mSheetContent[0m, [33mSheetTrigger[0m } [36mfrom[0m [32m"@/components/ui/sheet"[0m;
+  [90m   |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m ...[36mrt[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+  [90m11 |[0m ...
+  [90m12 |[0m ...[36mrt[0m [36mdefault[0m [36masync[0m [36mfunction[0m [33mDashboardLayout[0m({ children }: { children:.[33m..[0m
+
+Import map: aliased to relative './src/components/ui/sheet' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/api/auth/register/route.ts:5:1
+Module not found: Can't resolve '@/lib/prisma'
+  [90m3 |[0m
+  [90m4 |[0m [36mimport[0m { [33mNextResponse[0m } [36mfrom[0m [32m"next/route"[0m;
+[31m[1m>[0m [90m5 |[0m [36mimport[0m { prisma } [36mfrom[0m [32m"@/lib/prisma"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m6 |[0m [36mimport[0m bcryptjs [36mfrom[0m [32m"bcryptjs"[0m;
+  [90m7 |[0m [36mimport[0m { registerSchema } [36mfrom[0m [32m"@/lib/validations/auth"[0m;
+  [90m8 |[0m
+
+Import map: aliased to relative './src/lib/prisma' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/dashboard/layout.tsx:6:1
+Module not found: Can't resolve '@/lib/prisma'
+  [90m4 |[0m [36mimport[0m { redirect } [36mfrom[0m [32m"next/navigation"[0m;
+  [90m5 |[0m [36mimport[0m { auth } [36mfrom[0m [32m"@/auth"[0m;
+[31m[1m>[0m [90m6 |[0m [36mimport[0m { prisma } [36mfrom[0m [32m"@/lib/prisma"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m"next/link"[0m;
+  [90m8 |[0m [36mimport[0m { [33mLayoutDashboard[0m, [33mPackage[0m, [33mTags[0m, [33mShoppingCart[0m, [33mUsers[0m, [33mBarChart[0m,.[33m..[0m
+  [90m9 |[0m [36mimport[0m { [33mSheet[0m, [33mSheetContent[0m, [33mSheetTrigger[0m } [36mfrom[0m [32m"@/components/ui/sheet"[0m;
+
+Import map: aliased to relative './src/lib/prisma' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/page.tsx:4:1
+Module not found: Can't resolve '@/lib/prisma'
+  [90m2 |[0m [90m// Public homepage placeholder[0m
+  [90m3 |[0m
+[31m[1m>[0m [90m4 |[0m [36mimport[0m { prisma } [36mfrom[0m [32m"@/lib/prisma"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m5 |[0m [36mimport[0m [33mLink[0m [36mfrom[0m [32m"next/link"[0m;
+  [90m6 |[0m [36mimport[0m { [33mShoppingCart[0m } [36mfrom[0m [32m"lucide-react"[0m;
+  [90m7 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+
+Import map: aliased to relative './src/lib/prisma' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/layout.tsx:6:1
+Module not found: Can't resolve '@/lib/utils'
+  [90m4 |[0m [36mimport[0m { [33mSessionProvider[0m } [36mfrom[0m [32m"@/components/providers/session-provider"[0m;
+  [90m5 |[0m [36mimport[0m { [33mToaster[0m } [36mfrom[0m [32m"sonner"[0m;
+[31m[1m>[0m [90m6 |[0m [36mimport[0m { cn } [36mfrom[0m [32m"@/lib/utils"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m7 |[0m
+  [90m8 |[0m [36mconst[0m geist = [33mGeist[0m({subsets:[[32m'latin'[0m],variable:[32m'--font-sans'[0m});
+  [90m9 |[0m
+
+Import map: aliased to relative './src/lib/utils' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/api/auth/register/route.ts:7:1
+Module not found: Can't resolve '@/lib/validations/auth'
+  [90m 5 |[0m [36mimport[0m { prisma } [36mfrom[0m [32m"@/lib/prisma"[0m;
+  [90m 6 |[0m [36mimport[0m bcryptjs [36mfrom[0m [32m"bcryptjs"[0m;
+[31m[1m>[0m [90m 7 |[0m [36mimport[0m { registerSchema } [36mfrom[0m [32m"@/lib/validations/auth"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m
+  [90m 9 |[0m [36mexport[0m [36masync[0m [36mfunction[0m [33mPOST[0m(req: [33mRequest[0m) {
+  [90m10 |[0m   [36mtry[0m {
+
+Import map: aliased to relative './src/lib/validations/auth' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/auth/login/page.tsx:12:1
+Module not found: Can't resolve '@/lib/validations/auth'
+  [90m10 |[0m [36mimport[0m { zodResolver } [36mfrom[0m [32m"@hookform/resolvers/zod"[0m;
+  [90m11 |[0m [36mimport[0m * [36mas[0m z [36mfrom[0m [32m"zod"[0m;
+[31m[1m>[0m [90m12 |[0m [36mimport[0m { loginSchema } [36mfrom[0m [32m"@/lib/validations/auth"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m13 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+  [90m14 |[0m [36mimport[0m { [33mInput[0m } [36mfrom[0m [32m"@/components/ui/input"[0m;
+  [90m15 |[0m [36mimport[0m { [33mLabel[0m } [36mfrom[0m [32m"@/components/ui/label"[0m;
+
+Import map: aliased to relative './src/lib/validations/auth' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/auth/login/page.tsx [Client Component Browser]
+    ./app/auth/login/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/auth/login/page.tsx [Client Component SSR]
+    ./app/auth/login/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/auth/register/page.tsx:12:1
+Module not found: Can't resolve '@/lib/validations/auth'
+  [90m10 |[0m [36mimport[0m { zodResolver } [36mfrom[0m [32m"@hookform/resolvers/zod"[0m;
+  [90m11 |[0m [36mimport[0m * [36mas[0m z [36mfrom[0m [32m"zod"[0m;
+[31m[1m>[0m [90m12 |[0m [36mimport[0m { registerSchema } [36mfrom[0m [32m"@/lib/validations/auth"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m13 |[0m [36mimport[0m { [33mButton[0m } [36mfrom[0m [32m"@/components/ui/button"[0m;
+  [90m14 |[0m [36mimport[0m { [33mInput[0m } [36mfrom[0m [32m"@/components/ui/input"[0m;
+  [90m15 |[0m [36mimport[0m { [33mLabel[0m } [36mfrom[0m [32m"@/components/ui/label"[0m;
+
+Import map: aliased to relative './src/lib/validations/auth' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/auth/register/page.tsx [Client Component Browser]
+    ./app/auth/register/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/auth/register/page.tsx [Client Component SSR]
+    ./app/auth/register/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./app/api/auth/register/route.ts:4:1
+Module not found: Can't resolve 'next/route'
+  [90m2 |[0m [90m// API route for processing customer registrations[0m
+  [90m3 |[0m
+[31m[1m>[0m [90m4 |[0m [36mimport[0m { [33mNextResponse[0m } [36mfrom[0m [32m"next/route"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m5 |[0m [36mimport[0m { prisma } [36mfrom[0m [32m"@/lib/prisma"[0m;
+  [90m6 |[0m [36mimport[0m bcryptjs [36mfrom[0m [32m"bcryptjs"[0m;
+  [90m7 |[0m [36mimport[0m { registerSchema } [36mfrom[0m [32m"@/lib/validations/auth"[0m;
+
+Import map: aliased to module 'next' with subpath '/route' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./app/dashboard/layout.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/dashboard/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./proxy.ts:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/layout.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/auth/login/page.tsx:13:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/auth/register/page.tsx:13:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/dashboard/layout.tsx:10:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/not-found.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/auth/login/page.tsx:16:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/auth/register/page.tsx:16:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/dashboard/page.tsx:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/auth/login/page.tsx:14:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/auth/register/page.tsx:14:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/auth/login/page.tsx:15:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/auth/register/page.tsx:15:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/dashboard/layout.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/api/auth/register/route.ts:5:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/dashboard/layout.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/page.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/layout.tsx:6:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/api/auth/register/route.ts:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/auth/login/page.tsx:12:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/auth/register/page.tsx:12:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./app/api/auth/register/route.ts:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
