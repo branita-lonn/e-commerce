@@ -88,6 +88,11 @@ model StoreSettings {
   enableMpesa     Boolean    @default(true)
   metaTitle       String?
   metaDescription String?
+  heroHeadline    String?
+  heroSubheadline String?
+  heroImageUrl    String?
+  heroCtaText     String?
+  heroCtaLink     String?
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 }
