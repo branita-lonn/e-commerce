@@ -4,10 +4,11 @@
 import { Resend } from "resend";
 import { OrderConfirmationEmail } from "@/emails/OrderConfirmation";
 import { OrderStatusUpdateEmail } from "@/emails/order-status-update";
+import { AbandonedCartEmail } from "@/emails/abandoned-cart";
 import React from "react";
 import { OrderStatus } from "@prisma/client";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface SendOrderConfirmationParams {
   email: string;
@@ -78,5 +79,35 @@ export async function sendOrderStatusUpdate({
     });
   } catch (error) {
     console.error("Failed to send order status update email:", error);
+  }
+}
+
+interface SendAbandonedCartParams {
+  email: string;
+  customerName: string;
+  recoveryUrl: string;
+  items: { name: string; quantity: number; price: number }[];
+}
+
+export async function sendAbandonedCart({
+  email,
+  customerName,
+  recoveryUrl,
+  items,
+}: SendAbandonedCartParams) {
+  try {
+    await resend.emails.send({
+      from: "MiDuka <orders@miduka.com>",
+      to: email,
+      subject: "Did you forget something?",
+      react: React.createElement(AbandonedCartEmail, {
+        customerName,
+        recoveryUrl,
+        items,
+      }),
+    });
+  } catch (error) {
+    console.error("Failed to send abandoned cart email:", error);
+    throw error;
   }
 }
