@@ -7,11 +7,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
-    const { id } = params;
+    const { id } = await params;
 
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -71,11 +71,11 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
-    const { id } = params;
+    const { id } = await params;
 
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -103,11 +103,11 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
-    const { id } = params;
+    const { id } = await params;
 
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });

@@ -33,6 +33,7 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
           alt={images[activeIndex].altText || `${productName} image ${activeIndex + 1}`}
           fill
           priority
+          loading="eager"
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover transition-opacity duration-300"
         />

@@ -8,10 +8,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = params;
+    const { slug } = await params;
 
     const product = await prisma.product.findUnique({
       where: { slug, isActive: true },
