@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
 
-  const [product, settings] = await Promise.all([
+  const [product, settings, session] = await Promise.all([
     prisma.product.findUnique({
       where: { slug, isActive: true },
       include: {

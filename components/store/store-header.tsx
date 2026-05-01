@@ -82,12 +82,12 @@ export default function StoreHeader({ storeName, logoUrl, user }: StoreHeaderPro
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 {user.role === "STORE_OWNER" && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin">Seller Dashboard</Link>
+                  <DropdownMenuItem render={<Link href="/admin" />}>
+                    Seller Dashboard
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem asChild>
-                  <Link href="/account">Account Settings</Link>
+                <DropdownMenuItem render={<Link href="/account" />}>
+                  Account Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => void signOut()}>
@@ -102,11 +102,11 @@ export default function StoreHeader({ storeName, logoUrl, user }: StoreHeaderPro
                 <User className="h-5 w-5" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link href="/auth/login">Log in</Link>
+                <DropdownMenuItem render={<Link href="/auth/login" />}>
+                  Log in
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/auth/register">Register</Link>
+                <DropdownMenuItem render={<Link href="/auth/register" />}>
+                  Register
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
