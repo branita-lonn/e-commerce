@@ -132,6 +132,9 @@ model StoreSettings {
   socialLinks     Json?
   returnPolicy    String?    @db.Text
   whatsappNumber  String?
+  contactEmail    String?
+  contactPhone    String?
+  businessHours   Json?
   enableStripe    Boolean    @default(true)
   enableMpesa     Boolean    @default(true)
   metaTitle       String?
@@ -468,5 +471,17 @@ model Engagement {
   customer User?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
   @@index([productId, type])
+  @@index([createdAt])
+}
+
+model DashboardNotification {
+  id        String   @id @default(cuid())
+  type      String   // NEW_ORDER, LOW_STOCK, NEW_REVIEW
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([isRead])
   @@index([createdAt])
 }
