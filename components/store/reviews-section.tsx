@@ -30,6 +30,7 @@ interface ReviewsSectionProps {
   productId: string;
   productSlug: string;
   isEligible: boolean;
+  currentUserId?: string;
   initialData: {
     averageRating: number;
     totalReviews: number;
@@ -41,6 +42,7 @@ export function ReviewsSection({
   productId,
   productSlug,
   isEligible,
+  currentUserId,
   initialData,
 }: ReviewsSectionProps) {
   const [reviews, setReviews] = useState<ReviewWithRelations[]>([]);
@@ -52,6 +54,7 @@ export function ReviewsSection({
   const [sort, setSort] = useState("newest");
   const [page, setPage] = useState(1);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState<ReviewWithRelations | null>(null);
 
   const limit = 10;
   const totalPages = Math.ceil(total / limit);
@@ -154,6 +157,8 @@ export function ReviewsSection({
               <ReviewCard 
                 key={review.id} 
                 review={review} 
+                currentUserId={currentUserId}
+                onEdit={() => setEditingReview(review)}
                 onVoteSuccess={(newCount) => {
                   // Local update for better UX
                   setReviews(prev => prev.map(r => 
@@ -219,6 +224,25 @@ export function ReviewsSection({
           </p>
         </div>
       )}
+      {/* Edit Review Dialog */}
+      <Dialog open={!!editingReview} onOpenChange={(open) => !open && setEditingReview(null)}>
+        <DialogContent className="max-w-xl rounded-4xl sm:rounded-4xl">
+          <DialogHeader>
+            <DialogTitle>Edit Your Review</DialogTitle>
+          </DialogHeader>
+          {editingReview && (
+            <ReviewForm
+              productId={productId}
+              initialData={editingReview}
+              onSuccess={() => {
+                setEditingReview(null);
+                fetchReviews();
+              }}
+              onCancel={() => setEditingReview(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

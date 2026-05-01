@@ -28,9 +28,16 @@ interface ReviewFormProps {
   productId: string;
   onSuccess: () => void;
   onCancel: () => void;
+  initialData?: {
+    id: string;
+    rating: number;
+    title: string | null;
+    body: string;
+    photos: string[];
+  };
 }
 
-export function ReviewForm({ productId, onSuccess, onCancel }: ReviewFormProps) {
+export function ReviewForm({ productId, onSuccess, onCancel, initialData }: ReviewFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -39,10 +46,10 @@ export function ReviewForm({ productId, onSuccess, onCancel }: ReviewFormProps) 
     resolver: zodResolver(reviewSchema),
     defaultValues: {
       productId,
-      rating: 0,
-      title: "",
-      body: "",
-      photos: [],
+      rating: initialData?.rating || 0,
+      title: initialData?.title || "",
+      body: initialData?.body || "",
+      photos: initialData?.photos || [],
     },
   });
 
@@ -107,18 +114,21 @@ export function ReviewForm({ productId, onSuccess, onCancel }: ReviewFormProps) 
 
     try {
       setIsSubmitting(true);
-      const res = await fetch("/api/reviews", {
-        method: "POST",
+      const url = initialData ? `/api/reviews/${initialData.id}` : "/api/reviews";
+      const method = initialData ? "PUT" : "POST";
+      
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
 
       if (!res.ok) {
         const error = await res.text();
-        throw new Error(error || "Failed to submit review");
+        throw new Error(error || `Failed to ${initialData ? "update" : "submit"} review`);
       }
 
-      toast.success("Review submitted! Thank you.");
+      toast.success(initialData ? "Review updated!" : "Review submitted! Thank you.");
       onSuccess();
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
@@ -269,10 +279,10 @@ export function ReviewForm({ productId, onSuccess, onCancel }: ReviewFormProps) 
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
+                {initialData ? "Updating..." : "Submitting..."}
               </>
             ) : (
-              "Post Review"
+              initialData ? "Update Review" : "Post Review"
             )}
           </Button>
         </div>

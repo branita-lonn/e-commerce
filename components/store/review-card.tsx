@@ -12,17 +12,22 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import type { ReviewWithRelations } from "@/types";
-import { toast } from "sonner";
+import { differenceInDays } from "date-fns";
 
 interface ReviewCardProps {
   review: ReviewWithRelations;
+  currentUserId?: string;
+  onEdit?: () => void;
   onVoteSuccess?: (newCount: number) => void;
 }
 
-export function ReviewCard({ review, onVoteSuccess }: ReviewCardProps) {
+export function ReviewCard({ review, currentUserId, onEdit, onVoteSuccess }: ReviewCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
+
+  const isAuthor = currentUserId === review.customerId;
+  const daysSinceCreation = differenceInDays(new Date(), new Date(review.createdAt));
+  const canEdit = isAuthor && daysSinceCreation <= 30;
 
   const customerName = review.customer.name || "Anonymous";
   const initials = customerName
@@ -116,6 +121,18 @@ export function ReviewCard({ review, onVoteSuccess }: ReviewCardProps) {
             </div>
           </div>
         </div>
+
+        {canEdit && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onEdit}
+            className="h-8 px-2 text-xs rounded-xl gap-1.5 hover:bg-primary/5 hover:text-primary transition-all"
+          >
+            <MessageSquare className="h-3.5 w-3.5" />
+            Edit
+          </Button>
+        )}
       </div>
 
       <div className="space-y-2">

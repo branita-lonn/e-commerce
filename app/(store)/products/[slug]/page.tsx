@@ -282,6 +282,7 @@ export default async function ProductDetailPage({ params }: Props) {
             productId={product.id}
             productSlug={product.slug}
             isEligible={isEligible}
+            currentUserId={session?.user?.id}
             initialData={{
               averageRating,
               totalReviews,
