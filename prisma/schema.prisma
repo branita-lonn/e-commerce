@@ -58,6 +58,16 @@ enum EngagementType {
   PURCHASE
 }
 
+enum BundleType {
+  BUY_X_GET_Y_FREE
+  BUY_X_GET_PERCENT_OFF
+}
+
+enum LoyaltyTransactionType {
+  EARN
+  REDEEM
+}
+
 // ─── AUTH MODELS ──────────────────────────────────────────────────────────────
 
 model User {
@@ -82,6 +92,7 @@ model User {
   reviews      Review[]
   reviewVotes  ReviewVote[]
   engagements  Engagement[]
+  loyaltyAccount LoyaltyAccount?
 }
 
 model Account {
@@ -146,6 +157,12 @@ model StoreSettings {
   heroImageUrl    String?
   heroCtaText     String?
   heroCtaLink     String?
+  
+  // Loyalty & Marketing
+  loyaltyPointsPerKes    Int      @default(1)
+  loyaltyRedemptionRate Int      @default(100)
+  whatsappEnabled       Boolean  @default(false)
+
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 }
@@ -178,6 +195,7 @@ model Product {
   stockAlerts   StockAlert[]
   reviews       Review[]
   engagements   Engagement[]
+  flashSale     FlashSale?
 }
 
 model Category {
@@ -240,8 +258,20 @@ model Cart {
 
   customer User?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
   items    CartItem[]
+  abandonedCart AbandonedCartRecord?
 
   @@index([sessionId])
+}
+
+model AbandonedCartRecord {
+  id             String    @id @default(cuid())
+  cartId         String    @unique
+  customerId     String
+  reminderSentAt DateTime?
+  convertedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
 }
 
 model CartItem {
@@ -284,6 +314,13 @@ model Order {
   mpesaCheckoutRequestId String?
   stripePaymentIntentId  String?
   notes                  String?
+  
+  // Promotional Fields
+  giftCardCode           String?
+  giftCardDiscount       Decimal       @default(0)
+  loyaltyPointsRedeemed Int           @default(0)
+  loyaltyPointsEarned   Int           @default(0)
+
   createdAt              DateTime      @default(now())
   updatedAt              DateTime      @updatedAt
 
@@ -486,4 +523,76 @@ model DashboardNotification {
 
   @@index([isRead])
   @@index([createdAt])
+}
+
+// ─── PROMOTIONS & MARKETING ───────────────────────────────────────────────────
+
+model FlashSale {
+  id        String   @id @default(cuid())
+  productId String   @unique
+  salePrice Decimal
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([endTime])
+}
+
+model Bundle {
+  id              String     @id @default(cuid())
+  name            String
+  description     String?    @db.Text
+  type            BundleType
+  buyQuantity     Int
+  getQuantity     Int?       // For BUY_X_GET_Y_FREE
+  discountPercent Int?       // For BUY_X_GET_PERCENT_OFF
+  isActive        Boolean    @default(true)
+  productIds      String[]   // IDs of products this bundle applies to
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model LoyaltyAccount {
+  id             String   @id @default(cuid())
+  customerId     String   @unique
+  points         Int      @default(0)
+  lifetimePoints Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  customer     User                 @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  transactions LoyaltyTransaction[]
+}
+
+model LoyaltyTransaction {
+  id               String                 @id @default(cuid())
+  loyaltyAccountId String
+  type             LoyaltyTransactionType
+  points           Int
+  orderId          String?
+  description      String
+  createdAt        DateTime               @default(now())
+
+  loyaltyAccount LoyaltyAccount @relation(fields: [loyaltyAccountId], references: [id], onDelete: Cascade)
+
+  @@index([loyaltyAccountId])
+}
+
+model GiftCard {
+  id                    String    @id @default(cuid())
+  code                  String    @unique
+  initialValue          Decimal
+  remainingValue        Decimal
+  currency              String    @default("KES")
+  expiresAt             DateTime?
+  purchasedByCustomerId String?
+  redeemedByCustomerId  String?
+  orderId               String?
+  isActive              Boolean   @default(true)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([code])
 }
