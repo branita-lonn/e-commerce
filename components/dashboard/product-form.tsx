@@ -68,11 +68,12 @@ type FormValues = z.infer<typeof formSchema>;
 interface ProductFormProps {
   initialData?: ProductWithRelationsSerialized | null;
   categories: CategoryWithRelations[];
+  featuredCount: number;
 }
 
 const STEPS = ["Details", "Description", "Variants", "Media"];
 
-export function ProductForm({ initialData, categories }: ProductFormProps) {
+export function ProductForm({ initialData, categories, featuredCount }: ProductFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -469,7 +470,17 @@ export function ProductForm({ initialData, categories }: ProductFormProps) {
                         <FormDescription className="text-[10px]">Show on homepage.</FormDescription>
                       </div>
                       <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} disabled={loading} />
+                        <Switch 
+                          checked={field.value} 
+                          onCheckedChange={(checked) => {
+                            if (checked && !field.value && featuredCount >= 6) {
+                              toast.error("You can only feature up to 6 products. Remove one to add another.");
+                              return;
+                            }
+                            field.onChange(checked);
+                          }} 
+                          disabled={loading} 
+                        />
                       </FormControl>
                     </FormItem>
                   )}

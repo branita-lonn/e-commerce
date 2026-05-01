@@ -43,9 +43,14 @@ export default async function ProductsPage() {
     completenessScore: computeCompleteness(product as ProductWithRelations),
   }));
 
+  const featuredCount = products.filter(p => p.isFeatured).length;
+
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <ProductsClient initialProducts={productsWithScore} />
+      <ProductsClient 
+        initialProducts={productsWithScore} 
+        featuredCount={featuredCount}
+      />
     </div>
   );
 }

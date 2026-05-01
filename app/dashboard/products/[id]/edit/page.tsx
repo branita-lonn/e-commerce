@@ -18,7 +18,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
     redirect("/auth/login");
   }
 
-  const [product, categories] = await Promise.all([
+  const [product, categories, featuredCount] = await Promise.all([
     prisma.product.findUnique({
       where: { id },
       include: {
@@ -42,6 +42,9 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
         { name: "asc" },
       ],
     }),
+    prisma.product.count({
+      where: { isFeatured: true }
+    })
   ]);
 
   if (!product) {
@@ -67,7 +70,11 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
         </div>
       </div>
       <div className="rounded-xl border bg-card p-6">
-        <EditProductForm initialData={serializedProduct} categories={categories} />
+        <EditProductForm 
+          initialData={serializedProduct} 
+          categories={categories} 
+          featuredCount={featuredCount}
+        />
       </div>
     </div>
   );

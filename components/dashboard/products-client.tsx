@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus, Edit, Search, Trash2, Upload } from "lucide-react";
+import { Plus, Edit, Search, Trash2, Upload, Star } from "lucide-react";
 import { ProductWithRelationsSerialized } from "@/types";
 import { InlineConfirmDelete } from "@/components/dashboard/inline-confirm-delete";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -137,10 +137,19 @@ export function ProductsClient({ initialProducts }: { initialProducts: ProductWi
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
+        <div className="flex items-center gap-3">
           <h2 className="text-3xl font-bold tracking-tight">Products</h2>
-          <p className="text-muted-foreground">Manage your product catalogue.</p>
+          <Badge variant="outline" className={cn(
+            "rounded-full px-3 py-1 font-mono text-xs flex items-center gap-1.5",
+            featuredCount >= 6 ? "text-amber-600 border-amber-200 bg-amber-50" : "text-muted-foreground"
+          )}>
+            <Star className={cn("h-3 w-3", featuredCount >= 6 ? "fill-amber-500 text-amber-500" : "")} />
+            {featuredCount}/6 featured slots used
+          </Badge>
         </div>
-        <div className="flex items-center gap-2">
+        <p className="text-muted-foreground">Manage your product catalogue.</p>
+      </div>
+      <div className="flex items-center gap-2">
           {selectedIds.size > 0 && (
             <Button variant="destructive" onClick={handleBulkDelete} disabled={isDeletingBulk}>
               <Trash2 className="mr-2 h-4 w-4" />

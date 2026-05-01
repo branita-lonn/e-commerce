@@ -17,19 +17,24 @@ export default async function NewProductPage() {
     redirect("/auth/login");
   }
 
-  const categories = await prisma.category.findMany({
-    include: {
-      parent: true,
-      children: true,
-      _count: {
-        select: { products: true },
+  const [categories, featuredCount] = await Promise.all([
+    prisma.category.findMany({
+      include: {
+        parent: true,
+        children: true,
+        _count: {
+          select: { products: true },
+        },
       },
-    },
-    orderBy: [
-      { sortOrder: "asc" },
-      { name: "asc" },
-    ],
-  });
+      orderBy: [
+        { sortOrder: "asc" },
+        { name: "asc" },
+      ],
+    }),
+    prisma.product.count({
+      where: { isFeatured: true }
+    })
+  ]);
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 max-w-4xl mx-auto w-full">
@@ -40,7 +45,7 @@ export default async function NewProductPage() {
         </div>
       </div>
       <div className="rounded-xl border bg-card p-6">
-        <AddProductForm categories={categories} />
+        <AddProductForm categories={categories} featuredCount={featuredCount} />
       </div>
     </div>
   );

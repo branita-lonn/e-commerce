@@ -1,6 +1,3 @@
-// app/(store)/page.tsx
-// Public homepage — hero, featured products, new arrivals, on sale, category tiles
-
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
@@ -8,6 +5,7 @@ import { formatCurrency } from "@/lib/utils";
 import ProductCard from "@/components/store/product-card";
 import { Button } from "@/components/ui/button";
 import type { Prisma } from "@prisma/client";
+import HomepageSection from "@/components/store/homepage-section";
 
 export const revalidate = 60;
 
@@ -16,6 +14,8 @@ type RawProduct = Prisma.ProductGetPayload<{
   include: {
     images: { select: { url: true; sortOrder: true } };
     category: { select: { name: true; slug: true } };
+    reviews: { select: { rating: true } };
+    flashSale: true;
   };
 }>;
 
@@ -31,16 +31,14 @@ function toCardProps(p: RawProduct) {
     isOnSale: p.isOnSale,
     isFeatured: p.isFeatured,
     stockQuantity: p.stockQuantity,
-    createdAt: p.createdAt.toISOString(),
+    createdAt: p.createdAt,
     reviewCount: p.reviews.length,
-    rating: p.reviews.length > 0 ? p.reviews.reduce((acc, r) => acc + r.rating, 0) / p.reviews.length : 0,
+    rating: p.reviews.length > 0 ? p.reviews.reduce((acc, r: any) => acc + r.rating, 0) / p.reviews.length : 0,
     flashSale: p.flashSale ? {
       ...p.flashSale,
       salePrice: Number(p.flashSale.salePrice),
-      startTime: p.flashSale.startTime.toISOString(),
-      endTime: p.flashSale.endTime.toISOString(),
     } : null,
-  };
+  } as any;
 }
 
 const PRODUCT_INCLUDE = {
@@ -55,7 +53,8 @@ export default async function HomePage() {
   const fourteenDaysAgo = new Date();
   fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
 
-  const [settings, featured, newArrivals, onSale, categories] =
+  // Fetch initial data
+  const [settings, featured, newArrivals, onSale, categories, bestSellersData] =
     await Promise.all([
       prisma.storeSettings.findFirst(),
       prisma.product.findMany({
@@ -81,13 +80,35 @@ export default async function HomePage() {
         include: { _count: { select: { products: true } } },
         orderBy: { sortOrder: "asc" },
       }),
+      prisma.orderItem.groupBy({
+        by: ['productId'],
+        _sum: { quantity: true },
+        orderBy: { _sum: { quantity: 'desc' } },
+        take: 8,
+      }),
     ]);
+
+  // Fetch Best Seller products separately to maintain relations
+  const bestSellerProducts = await prisma.product.findMany({
+    where: {
+      id: { in: bestSellersData.map(item => item.productId) },
+      isActive: true,
+    },
+    include: PRODUCT_INCLUDE,
+  });
+
+  // Sort best sellers by their aggregated quantity
+  const sortedBestSellers = [...bestSellerProducts].sort((a, b) => {
+    const qtyA = bestSellersData.find(item => item.productId === a.id)?._sum?.quantity ?? 0;
+    const qtyB = bestSellersData.find(item => item.productId === b.id)?._sum?.quantity ?? 0;
+    return qtyB - qtyA;
+  });
 
   const storeName = settings?.storeName ?? "MiDuka";
   const tagline = settings?.storeTagline ?? "Your neighbourhood store, online.";
 
   return (
-    <div className="flex flex-col gap-16 pb-16">
+    <div className="flex flex-col gap-12 pb-16">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section aria-label="Hero banner" className="relative w-full overflow-hidden">
         {settings?.heroImageUrl ? (
@@ -143,31 +164,39 @@ export default async function HomePage() {
         )}
       </section>
 
-      <div className="container mx-auto px-4 flex flex-col gap-16">
+      <div className="container mx-auto px-4 flex flex-col gap-12">
         {/* ── Featured Products ─────────────────────────────────────────── */}
-        {featured.length > 0 && (
-          <Section title="Featured Products" href="/categories">
-            <ProductGrid products={featured.map(toCardProps)} />
-          </Section>
-        )}
+        <HomepageSection 
+          title="Featured Products" 
+          products={featured.map(toCardProps)} 
+          viewAllHref="/categories" 
+        />
 
         {/* ── New Arrivals ──────────────────────────────────────────────── */}
-        {newArrivals.length > 0 && (
-          <Section title="New Arrivals" href="/categories">
-            <ProductGrid products={newArrivals.map(toCardProps)} />
-          </Section>
-        )}
+        <HomepageSection 
+          title="New Arrivals" 
+          products={newArrivals.map(toCardProps)} 
+          viewAllHref="/categories" 
+        />
+
+        {/* ── Best Sellers ──────────────────────────────────────────────── */}
+        <HomepageSection 
+          title="Best Sellers" 
+          products={sortedBestSellers.map(toCardProps)} 
+          viewAllHref="/categories" 
+        />
 
         {/* ── On Sale ───────────────────────────────────────────────────── */}
-        {onSale.length > 0 && (
-          <Section title="On Sale" href="/search?onSale=true">
-            <ProductGrid products={onSale.map(toCardProps)} />
-          </Section>
-        )}
+        <HomepageSection 
+          title="On Sale" 
+          products={onSale.map(toCardProps)} 
+          viewAllHref="/search?onSale=true" 
+        />
 
         {/* ── Category Tiles ────────────────────────────────────────────── */}
         {categories.length > 0 && (
-          <Section title="Shop by Category">
+          <section className="flex flex-col gap-6 py-10">
+            <h2 className="text-2xl font-bold text-foreground">Shop by Category</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {categories.map((cat) => (
                 <Link
@@ -200,51 +229,9 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
-          </Section>
+          </section>
         )}
       </div>
-    </div>
-  );
-}
-
-// ─── Local helper components ───────────────────────────────────────────────
-function Section({
-  title,
-  href,
-  children,
-}: {
-  title: string;
-  href?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-foreground">{title}</h2>
-        {href && (
-          <Link
-            href={href}
-            className="text-sm text-primary hover:underline font-medium"
-          >
-            View all →
-          </Link>
-        )}
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function ProductGrid({
-  products,
-}: {
-  products: ReturnType<typeof toCardProps>[];
-}) {
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      {products.map((p, index) => (
-        <ProductCard key={p.id} {...p} priority={index < 4} />
-      ))}
     </div>
   );
 }
