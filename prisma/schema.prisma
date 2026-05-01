@@ -73,6 +73,8 @@ model User {
   addresses    Address[]
   wishlist     Wishlist?
   stockAlerts  StockAlert[]
+  reviews      Review[]
+  reviewVotes  ReviewVote[]
 }
 
 model Account {
@@ -161,6 +163,7 @@ model Product {
   orderItems    OrderItem[]
   wishlistItems WishlistItem[]
   stockAlerts   StockAlert[]
+  reviews       Review[]
 }
 
 model Category {
@@ -272,6 +275,7 @@ model Order {
   items           OrderItem[]
   shippingAddress Address     @relation(fields: [shippingAddressId], references: [id])
   coupon          Coupon?     @relation(fields: [couponId], references: [id])
+  reviews         Review[]
 
   @@index([status])
   @@index([customerId])
@@ -387,5 +391,55 @@ model StockAlert {
 
   @@index([productId, isNotified])
   @@index([email])
+}
+
+// ─── REVIEWS ──────────────────────────────────────────────────────────────────
+
+model Review {
+  id                 String   @id @default(cuid())
+  rating             Int
+  title              String?
+  body               String   @db.Text
+  photos             String[]
+  isVerifiedPurchase Boolean  @default(false)
+  productId          String
+  customerId         String
+  orderId            String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  product  Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer User         @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  order    Order?       @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  votes    ReviewVote[]
+  reply    ReviewReply?
+
+  @@unique([productId, customerId])
+  @@index([productId])
+  @@index([customerId])
+}
+
+model ReviewVote {
+  id         String   @id @default(cuid())
+  reviewId   String
+  customerId String
+  isHelpful  Boolean
+  createdAt  DateTime @default(now())
+
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  customer User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, customerId])
+  @@index([reviewId])
+}
+
+model ReviewReply {
+  id        String   @id @default(cuid())
+  reviewId  String   @unique
+  body      String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 }
 
