@@ -1,7 +1,10 @@
+"use client";
+
 // components/store/product-card.tsx
 // Reusable product card for all storefront product grids — rounded-4xl design
 
 import Link from "next/link";
+
 import Image from "next/image";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
@@ -27,6 +30,7 @@ export default function ProductCard({
   createdAt,
   rating = 0,
   reviewCount = 0,
+  priority = false,
 }: ProductCardProps) {
   const isNew = isNewProduct(createdAt);
   const isOutOfStock = stockQuantity === 0;
@@ -48,6 +52,7 @@ export default function ProductCard({
             alt={name}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            priority={priority}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (

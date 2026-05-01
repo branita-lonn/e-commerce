@@ -109,7 +109,7 @@ export default function ProductGrid({ defaultCategory, defaultQ }: ProductGridPr
 
       {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {products.map((p) => (
+        {products.map((p, index) => (
           <ProductCard
             key={p.id}
             id={p.id}
@@ -123,6 +123,7 @@ export default function ProductGrid({ defaultCategory, defaultQ }: ProductGridPr
             isFeatured={p.isFeatured}
             stockQuantity={p.stockQuantity}
             createdAt={p.createdAt}
+            priority={index < 4}
           />
         ))}
       </div>

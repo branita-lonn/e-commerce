@@ -9,6 +9,8 @@ import ProductCard from "@/components/store/product-card";
 import { Button } from "@/components/ui/button";
 import type { Prisma } from "@prisma/client";
 
+export const revalidate = 60;
+
 // ─── Serialization helper ──────────────────────────────────────────────────
 type RawProduct = Prisma.ProductGetPayload<{
   include: {
@@ -230,8 +232,8 @@ function ProductGrid({
 }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      {products.map((p) => (
-        <ProductCard key={p.id} {...p} />
+      {products.map((p, index) => (
+        <ProductCard key={p.id} {...p} priority={index < 4} />
       ))}
     </div>
   );

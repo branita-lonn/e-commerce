@@ -18,6 +18,8 @@ interface ProductFiltersProps {
   colours: string[];
   /** If set, category filter is locked to this slug (category page) */
   lockedCategory?: string;
+  /** Whether to render desktop sidebar, mobile trigger, or both (default) */
+  mode?: "desktop" | "mobile" | "both";
 }
 
 function FiltersContent({
@@ -186,32 +188,39 @@ function FiltersContent({
   );
 }
 
-export default function ProductFilters(props: ProductFiltersProps) {
+export default function ProductFilters({ mode = "both", ...props }: ProductFiltersProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
+
+  const showDesktop = mode === "desktop" || mode === "both";
+  const showMobile = mode === "mobile" || mode === "both";
 
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col w-56 flex-shrink-0 gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-foreground">Filters</h2>
-        </div>
-        <FiltersContent {...props} />
-      </aside>
+      {showDesktop && (
+        <aside className="hidden md:flex flex-col w-56 flex-shrink-0 gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-foreground">Filters</h2>
+          </div>
+          <FiltersContent {...props} />
+        </aside>
+      )}
 
       {/* Mobile sheet trigger */}
-      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetTrigger render={<Button variant="outline" className="md:hidden rounded-full gap-2" id="mobile-filter-btn" />}>
-          <Filter className="h-4 w-4" />
-          Filters
-        </SheetTrigger>
-        <SheetContent side="left" className="w-80 flex flex-col gap-6 pt-8">
-          <SheetHeader>
-            <SheetTitle>Filters</SheetTitle>
-          </SheetHeader>
-          <FiltersContent {...props} onClose={() => setSheetOpen(false)} />
-        </SheetContent>
-      </Sheet>
+      {showMobile && (
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetTrigger render={<Button variant="outline" className="md:hidden rounded-full gap-2" id="mobile-filter-btn" />}>
+            <Filter className="h-4 w-4" />
+            Filters
+          </SheetTrigger>
+          <SheetContent side="left" className="w-80 flex flex-col gap-6 pt-8">
+            <SheetHeader>
+              <SheetTitle>Filters</SheetTitle>
+            </SheetHeader>
+            <FiltersContent {...props} onClose={() => setSheetOpen(false)} />
+          </SheetContent>
+        </Sheet>
+      )}
     </>
   );
 }

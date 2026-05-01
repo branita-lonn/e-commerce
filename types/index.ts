@@ -87,6 +87,7 @@ export interface ProductCardProps {
   createdAt: string | Date;
   rating?: number;
   reviewCount?: number;
+  priority?: boolean;
 }
 
 

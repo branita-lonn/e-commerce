@@ -98,13 +98,13 @@ export default async function CategoryPage({ params }: Props) {
 
       {/* Filters + Grid layout */}
       <div className="flex gap-8 items-start">
-        <ProductFilters sizes={sizes} colours={colours} lockedCategory={slug} />
+        <ProductFilters sizes={sizes} colours={colours} lockedCategory={slug} mode="desktop" />
 
         <div className="flex-1 min-w-0 flex flex-col gap-4">
           {/* Mobile filter trigger + sort row */}
           <div className="flex items-center gap-3 flex-wrap">
             <Suspense fallback={<Skeleton className="h-9 w-32 rounded-2xl" />}>
-              <ProductFilters sizes={sizes} colours={colours} lockedCategory={slug} />
+              <ProductFilters sizes={sizes} colours={colours} lockedCategory={slug} mode="mobile" />
             </Suspense>
             <div className="ml-auto">
               <Suspense fallback={<Skeleton className="h-9 w-44 rounded-2xl" />}>

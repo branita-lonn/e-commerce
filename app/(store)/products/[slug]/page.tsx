@@ -4,15 +4,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Heart, Share2, Copy } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Heart, Share2, Copy } from "lucide-react";
 import ImageGallery from "@/components/store/image-gallery";
 import ProductCard from "@/components/store/product-card";
+import ProductInfo from "@/components/store/product-info";
 import RecentlyViewed from "@/components/store/recently-viewed";
 import Script from "next/script";
+import { ProductWithRelationsSerialized } from "@/types";
 
 export const revalidate = 60;
 
@@ -106,13 +106,26 @@ export default async function ProductDetailPage({ params }: Props) {
     image: product.images.map((img) => img.url),
     offers: {
       "@type": "Offer",
-      price: priceNum,
+      price: Number(product.price),
       priceCurrency: "KES",
       availability: isOutOfStock
         ? "https://schema.org/OutOfStock"
         : "https://schema.org/InStock",
     },
   };
+
+  // Serialize product for Client Component
+  const serializedProduct: ProductWithRelationsSerialized = {
+    ...product,
+    price: Number(product.price),
+    compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+    variants: product.variants.map((v) => ({
+      ...v,
+      priceOverride: v.priceOverride ? Number(v.priceOverride) : null,
+    })),
+  } as any;
 
   return (
     <>
@@ -144,70 +157,7 @@ export default async function ProductDetailPage({ params }: Props) {
               <span className="text-foreground">{product.name}</span>
             </nav>
 
-            <div className="flex flex-col gap-2">
-              <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
-                {product.name}
-              </h1>
-              
-              <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-foreground">
-                  {formatCurrency(priceNum)}
-                </span>
-                {comparePriceNum && comparePriceNum > priceNum && (
-                  <>
-                    <span className="text-lg text-muted-foreground line-through">
-                      {formatCurrency(comparePriceNum)}
-                    </span>
-                    <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-100 border-none">
-                      Save {formatCurrency(comparePriceNum - priceNum)}
-                    </Badge>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
-                isOutOfStock 
-                  ? "bg-destructive/10 text-destructive border-destructive/20" 
-                  : "bg-green-500/10 text-green-600 border-green-500/20"
-              }`}>
-                <div className={`w-1.5 h-1.5 rounded-full ${isOutOfStock ? "bg-destructive" : "bg-green-500"}`} />
-                {isOutOfStock ? "Out of Stock" : "In Stock"}
-              </div>
-            </div>
-
-            <div className="h-px bg-border my-2" />
-
-            {/* Variants placeholder (wired fully in cart stage) */}
-            {product.variants.length > 0 && (
-              <div className="flex flex-col gap-4 text-sm">
-                <p className="text-muted-foreground italic">Variant selection coming soon.</p>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex flex-col gap-3 mt-4">
-              <div className="flex gap-3">
-                <Button 
-                  size="lg" 
-                  className="flex-1 rounded-4xl text-base h-14"
-                  disabled={isOutOfStock}
-                  onClick={() => {/* To be wired to cart context */}}
-                >
-                  Add to Cart
-                </Button>
-                <Button size="lg" variant="outline" className="rounded-4xl px-6 h-14">
-                  <Heart className="h-5 w-5" />
-                </Button>
-              </div>
-
-              {isOutOfStock && (
-                <button className="text-sm font-medium text-primary hover:underline text-left mt-2">
-                  Notify me when back in stock
-                </button>
-              )}
-            </div>
+            <ProductInfo product={serializedProduct} />
 
             {/* Description */}
             {product.description && (

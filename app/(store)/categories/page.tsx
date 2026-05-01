@@ -40,7 +40,7 @@ export default async function CategoriesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-          {categories.map((cat) => (
+          {categories.map((cat, index) => (
             <Link
               key={cat.id}
               href={`/categories/${cat.slug}`}
@@ -54,6 +54,7 @@ export default async function CategoriesPage() {
                     alt={cat.name}
                     fill
                     sizes="80px"
+                    priority={index < 4}
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
