@@ -327,3 +327,18 @@ model Coupon {
 
   orders Order[]
 }
+
+// ─── DELIVERY ZONES ───────────────────────────────────────────────────────────
+
+model DeliveryZone {
+  id                    String   @id @default(cuid())
+  name                  String
+  counties              String[]
+  shippingCost          Decimal
+  freeShippingThreshold Decimal?
+  isActive              Boolean  @default(true)
+  sortOrder             Int      @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+

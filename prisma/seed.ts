@@ -131,6 +131,51 @@ async function main() {
   }
   console.log("Upserted Products.");
 
+  // 5. Create Delivery Zones
+  const zones = [
+    {
+      name: "Mombasa CBD",
+      counties: ["Mombasa"],
+      shippingCost: 0,
+      freeShippingThreshold: null,
+      sortOrder: 1,
+    },
+    {
+      name: "Mombasa County",
+      counties: ["Mombasa"],
+      shippingCost: 200,
+      freeShippingThreshold: 5000,
+      sortOrder: 2,
+    },
+    {
+      name: "Nairobi",
+      counties: ["Nairobi"],
+      shippingCost: 350,
+      freeShippingThreshold: 10000,
+      sortOrder: 3,
+    },
+    {
+      name: "Rest of Kenya",
+      // Seed an empty array for now, we can add all other 44 counties or rely on fallback logic
+      counties: ["Kilifi", "Kwale", "Taita Taveta", "Tana River", "Lamu", "Garissa", "Wajir", "Mandera", "Marsabit", "Isiolo", "Meru", "Tharaka-Nithi", "Embu", "Kitui", "Machakos", "Makueni", "Nyandarua", "Nyeri", "Kirinyaga", "Murang'a", "Kiambu", "Turkana", "West Pokot", "Samburu", "Trans Nzoia", "Uasin Gishu", "Elgeyo-Marakwet", "Nandi", "Baringo", "Laikipia", "Nakuru", "Narok", "Kajiado", "Kericho", "Bomet", "Kakamega", "Vihiga", "Bungoma", "Busia", "Siaya", "Kisumu", "Homa Bay", "Migori", "Kisii", "Nyamira"],
+      shippingCost: 500,
+      freeShippingThreshold: 15000,
+      sortOrder: 4,
+    },
+  ];
+
+  for (const zone of zones) {
+    const existing = await prisma.deliveryZone.findFirst({
+      where: { name: zone.name },
+    });
+    if (!existing) {
+      await prisma.deliveryZone.create({
+        data: zone,
+      });
+    }
+  }
+  console.log("Seeded Delivery Zones.");
+
   console.log("Seeding complete.");
 }
 
