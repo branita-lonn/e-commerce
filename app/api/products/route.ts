@@ -81,6 +81,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
           rating: true,
         },
       },
+      flashSale: true,
     };
 
     let [total, rawProducts] = await Promise.all([
@@ -177,6 +178,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       rating: p.reviews.length > 0 
         ? p.reviews.reduce((acc, r) => acc + r.rating, 0) / p.reviews.length 
         : 0,
+      flashSale: (p as any).flashSale ? {
+        ...(p as any).flashSale,
+        salePrice: Number((p as any).flashSale.salePrice),
+        startTime: (p as any).flashSale.startTime.toISOString(),
+        endTime: (p as any).flashSale.endTime.toISOString(),
+      } : null,
     }));
 
     const response: ProductsApiResponse = {

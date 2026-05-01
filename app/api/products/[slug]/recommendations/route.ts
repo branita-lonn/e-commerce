@@ -52,7 +52,11 @@ export async function GET(
           isActive: true,
           stockQuantity: { gt: 0 },
         },
-        include: { images: { take: 1, orderBy: { sortOrder: 'asc' } }, category: true },
+        include: { 
+          images: { take: 1, orderBy: { sortOrder: 'asc' } }, 
+          category: true,
+          flashSale: true 
+        },
       });
 
       if (recommendations.length > 0) {
@@ -61,6 +65,10 @@ export async function GET(
             ...p,
             price: Number(p.price),
             compareAtPrice: p.compareAtPrice ? Number(p.compareAtPrice) : null,
+            flashSale: p.flashSale ? {
+              ...p.flashSale,
+              salePrice: Number(p.flashSale.salePrice),
+            } : null,
           })),
           label: "Frequently Bought Together",
         });
@@ -75,7 +83,11 @@ export async function GET(
         stockQuantity: { gt: 0 },
         categoryId: product.categoryId,
       },
-      include: { images: { take: 1, orderBy: { sortOrder: 'asc' } }, category: true },
+      include: { 
+        images: { take: 1, orderBy: { sortOrder: 'asc' } }, 
+        category: true,
+        flashSale: true
+      },
     });
 
     const scoredProducts = similarProducts.map((p) => {
@@ -108,6 +120,10 @@ export async function GET(
             ...p,
             price: Number(p.price),
             compareAtPrice: p.compareAtPrice ? Number(p.compareAtPrice) : null,
+            flashSale: (p as any).flashSale ? {
+              ...(p as any).flashSale,
+              salePrice: Number((p as any).flashSale.salePrice),
+            } : null,
         })),
         label: "You Might Also Like",
       });
@@ -123,7 +139,11 @@ export async function GET(
       },
       orderBy: { createdAt: "desc" },
       take: 4,
-      include: { images: { take: 1, orderBy: { sortOrder: 'asc' } }, category: true },
+      include: { 
+        images: { take: 1, orderBy: { sortOrder: 'asc' } }, 
+        category: true,
+        flashSale: true
+      },
     });
 
     return NextResponse.json({
@@ -131,6 +151,10 @@ export async function GET(
         ...p,
         price: Number(p.price),
         compareAtPrice: p.compareAtPrice ? Number(p.compareAtPrice) : null,
+        flashSale: p.flashSale ? {
+          ...p.flashSale,
+          salePrice: Number(p.flashSale.salePrice),
+        } : null,
       })),
       label: "More from this Category",
     });

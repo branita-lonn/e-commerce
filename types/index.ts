@@ -60,6 +60,14 @@ export interface ProductPublic {
   variants: ProductVariantPublic[];
   rating: number;
   reviewCount: number;
+  flashSale?: FlashSalePublic | null;
+}
+
+export interface FlashSalePublic {
+  id: string;
+  salePrice: number;
+  startTime: string | Date;
+  endTime: string | Date;
 }
 
 export interface ProductsApiResponse {
@@ -85,6 +93,7 @@ export interface ProductCardProps {
   rating?: number;
   reviewCount?: number;
   priority?: boolean;
+  flashSale?: FlashSalePublic | null;
 }
 
 

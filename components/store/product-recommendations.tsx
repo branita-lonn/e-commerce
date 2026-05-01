@@ -67,6 +67,7 @@ export default function ProductRecommendations({ productSlug }: ProductRecommend
             // Handle optional rating data if included in the future
             rating={p.rating ?? 0}
             reviewCount={p.reviewCount ?? 0}
+            flashSale={p.flashSale}
           />
         ))}
       </div>

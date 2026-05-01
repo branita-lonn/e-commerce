@@ -24,6 +24,8 @@ export async function GET() {
                   take: 1,
                   orderBy: { sortOrder: "asc" },
                 },
+                flashSale: true,
+              },
               },
             },
           },
@@ -36,9 +38,17 @@ export async function GET() {
       return NextResponse.json([]);
     }
 
-    // Flatten to return just the products
+    // Flatten to return just the products with serialized prices
     const products = wishlist.items.map(item => ({
       ...item.product,
+      price: Number(item.product.price),
+      compareAtPrice: item.product.compareAtPrice ? Number(item.product.compareAtPrice) : null,
+      flashSale: (item.product as any).flashSale ? {
+        ...(item.product as any).flashSale,
+        salePrice: Number((item.product as any).flashSale.salePrice),
+        startTime: (item.product as any).flashSale.startTime.toISOString(),
+        endTime: (item.product as any).flashSale.endTime.toISOString(),
+      } : null,
       wishlistItemId: item.id,
     }));
 

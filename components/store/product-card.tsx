@@ -33,15 +33,25 @@ export default function ProductCard({
   reviewCount = 0,
   priority = false,
   id,
+  flashSale,
 }: ProductCardProps) {
   const { isWishlisted, toggleWishlist, isLoading } = useWishlist();
   const wishlisted = isWishlisted(id);
 
   const isNew = isNewProduct(createdAt);
   const isOutOfStock = stockQuantity === 0;
-  const discount =
-    compareAtPrice && compareAtPrice > price
-      ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
+
+  // Flash Sale logic
+  const activeFlashSale = flashSale && new Date(flashSale.startTime) <= new Date() && new Date(flashSale.endTime) >= new Date()
+    ? flashSale
+    : null;
+
+  const displayPrice = activeFlashSale ? activeFlashSale.salePrice : price;
+  const originalPrice = activeFlashSale ? price : compareAtPrice;
+  const showStrikethrough = activeFlashSale || (compareAtPrice && compareAtPrice > price);
+
+  const discount = showStrikethrough && originalPrice && originalPrice > displayPrice
+      ? Math.round(((originalPrice - displayPrice) / originalPrice) * 100)
       : null;
 
   return (
@@ -68,12 +78,16 @@ export default function ProductCard({
 
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
-          {isOnSale && discount !== null && (
+          {activeFlashSale ? (
+            <Badge variant="destructive" className="bg-destructive text-destructive-foreground rounded-full text-[10px] font-bold px-2 py-0.5 border-none shadow-sm">
+              FLASH SALE
+            </Badge>
+          ) : isOnSale && discount !== null && (
             <Badge variant="destructive" className="text-xs font-bold px-2 py-0.5">
               -{discount}%
             </Badge>
           )}
-          {isNew && !isOnSale && (
+          {isNew && !isOnSale && !activeFlashSale && (
             <Badge className="text-xs font-bold px-2 py-0.5">New</Badge>
           )}
         </div>
@@ -108,16 +122,14 @@ export default function ProductCard({
           <span
             className={cn(
               "font-bold text-foreground text-sm",
-              isOnSale && "text-destructive"
+              (isOnSale || activeFlashSale) && "text-destructive"
             )}
           >
-            {formatCurrency(price)}
+            {formatCurrency(displayPrice)}
           </span>
-          {compareAtPrice !== null &&
-            compareAtPrice !== undefined &&
-            compareAtPrice > price && (
+          {showStrikethrough && originalPrice && originalPrice > displayPrice && (
               <span className="text-xs text-muted-foreground line-through">
-                {formatCurrency(compareAtPrice)}
+                {formatCurrency(originalPrice)}
               </span>
             )}
         </div>

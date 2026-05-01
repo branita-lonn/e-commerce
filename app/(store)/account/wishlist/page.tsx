@@ -111,6 +111,7 @@ export default function WishlistPage() {
                 isOnSale={product.isOnSale}
                 stockQuantity={product.stockQuantity}
                 createdAt={product.createdAt}
+                flashSale={product.flashSale}
               />
               <div className="flex gap-2">
                 <Button 

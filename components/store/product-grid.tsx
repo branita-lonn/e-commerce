@@ -134,6 +134,7 @@ export default function ProductGrid({ defaultCategory, defaultQ }: ProductGridPr
             createdAt={p.createdAt}
             rating={p.rating}
             reviewCount={p.reviewCount}
+            flashSale={p.flashSale}
             priority={index < 4}
           />
         ))}

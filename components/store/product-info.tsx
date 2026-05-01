@@ -13,6 +13,7 @@ import type { ProductWithRelationsSerialized } from "@/types";
 import { cn } from "@/lib/utils";
 import StockAlertButton from "@/components/store/stock-alert-button";
 import { useWishlist } from "@/components/store/wishlist-provider";
+import { FlashSaleCountdown } from "@/components/store/flash-sale-countdown";
 
 interface ProductInfoProps {
   product: ProductWithRelationsSerialized;
@@ -55,8 +56,15 @@ export default function ProductInfo({
 
   const selectedVariantId = selectedVariant?.id;
 
-  // Effective price (variant override or base price)
-  const effectivePrice = selectedVariant?.priceOverride ?? product.price;
+  // Flash Sale logic
+  const activeFlashSale = product.flashSale && new Date(product.flashSale.startTime) <= new Date() && new Date(product.flashSale.endTime) >= new Date()
+    ? product.flashSale
+    : null;
+
+  // Effective price (flash sale > variant override > base price)
+  const effectivePrice = activeFlashSale ? activeFlashSale.salePrice : (selectedVariant?.priceOverride ?? product.price);
+  const strikethroughPrice = activeFlashSale ? (selectedVariant?.priceOverride ?? product.price) : product.compareAtPrice;
+  const showStrikethrough = activeFlashSale || (product.compareAtPrice && product.compareAtPrice > effectivePrice);
 
   // Stock
   const totalVariantStock = product.variants.reduce((acc, v) => acc + (v.stockQuantity ?? 0), 0);
@@ -105,7 +113,11 @@ export default function ProductInfo({
       {/* Name */}
       <div>
         <div className="flex flex-wrap items-center gap-2 mb-2">
-          {product.isOnSale && (
+          {activeFlashSale ? (
+            <Badge variant="destructive" className="rounded-full text-xs font-bold bg-destructive text-destructive-foreground">
+              Flash Sale
+            </Badge>
+          ) : product.isOnSale && (
             <Badge variant="destructive" className="rounded-full text-xs">
               Sale
             </Badge>
@@ -120,24 +132,32 @@ export default function ProductInfo({
       </div>
 
       {/* Price */}
-      <div className="flex items-baseline gap-3">
-        <span className="text-2xl font-bold text-primary">
-          {formatCurrency(effectivePrice)}
-        </span>
-        {product.compareAtPrice && product.compareAtPrice > effectivePrice && (
-          <span className="text-lg text-muted-foreground line-through">
-            {formatCurrency(product.compareAtPrice)}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-baseline gap-3">
+          <span className="text-2xl font-bold text-primary">
+            {formatCurrency(effectivePrice)}
           </span>
-        )}
-        {product.compareAtPrice && product.compareAtPrice > effectivePrice && (
-          <Badge variant="destructive" className="rounded-full text-xs">
-            {Math.round(
-              ((product.compareAtPrice - effectivePrice) /
-                product.compareAtPrice) *
-                100
-            )}
-            % OFF
-          </Badge>
+          {showStrikethrough && strikethroughPrice && Number(strikethroughPrice) > Number(effectivePrice) && (
+            <span className="text-lg text-muted-foreground line-through">
+              {formatCurrency(strikethroughPrice)}
+            </span>
+          )}
+          {showStrikethrough && strikethroughPrice && Number(strikethroughPrice) > Number(effectivePrice) && (
+            <Badge variant="destructive" className="rounded-full text-xs font-bold">
+              {Math.round(
+                ((Number(strikethroughPrice) - Number(effectivePrice)) /
+                  Number(strikethroughPrice)) *
+                  100
+              )}
+              % OFF
+            </Badge>
+          )}
+        </div>
+
+        {activeFlashSale && (
+          <div className="bg-primary/5 rounded-3xl p-4 border border-primary/10">
+            <FlashSaleCountdown endTime={activeFlashSale.endTime} />
+          </div>
         )}
       </div>
 

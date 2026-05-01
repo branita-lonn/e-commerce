@@ -64,6 +64,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           { size: "asc" },
         ],
       },
+      flashSale: true,
     },
   });
 
@@ -109,6 +110,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       createdAt: v.createdAt.toISOString(),
       updatedAt: v.updatedAt.toISOString(),
     })),
+    flashSale: product.flashSale ? {
+      ...product.flashSale,
+      salePrice: Number(product.flashSale.salePrice),
+      startTime: product.flashSale.startTime.toISOString(),
+      endTime: product.flashSale.endTime.toISOString(),
+    } : null,
   };
 
   const priceNum = Number(product.price);
