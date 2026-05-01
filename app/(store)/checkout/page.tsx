@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useSession } from "next-auth/react";
-import { ChevronRight, CheckCircle2, AlertCircle, ShoppingBag, Loader2 } from "lucide-react";
+import { ChevronRight, CheckCircle2, AlertCircle, ShoppingBag, Loader2, Gift } from "lucide-react";
 import { useCart } from "@/components/store/cart-provider";
 import { formatCurrency } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -66,6 +66,10 @@ export default function CheckoutPage() {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{code: string, discount: number} | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+
+  const [giftCardCode, setGiftCardCode] = useState("");
+  const [appliedGiftCard, setAppliedGiftCard] = useState<{code: string, discount: number} | null>(null);
+  const [giftCardLoading, setGiftCardLoading] = useState(false);
 
   // Payment Selection
   const [paymentMethod, setPaymentMethod] = useState<"MPESA" | "STRIPE">("MPESA");
@@ -149,8 +153,9 @@ export default function CheckoutPage() {
   // Derived Totals
   const total = useMemo(() => {
     const discount = appliedCoupon?.discount ?? 0;
-    return Math.max(0, subtotal - discount + shippingCost);
-  }, [subtotal, appliedCoupon, shippingCost]);
+    const giftDiscount = appliedGiftCard?.discount ?? 0;
+    return Math.max(0, subtotal - discount + shippingCost - giftDiscount);
+  }, [subtotal, appliedCoupon, shippingCost, appliedGiftCard]);
 
   // ─── SUBMIT HANDLERS ────────────────────────────────────────────────────────
 
@@ -187,6 +192,31 @@ export default function CheckoutPage() {
     }
   }
 
+  async function handleApplyGiftCard() {
+    if (!giftCardCode.trim()) return;
+    setGiftCardLoading(true);
+    try {
+      const currentTotalBeforeGift = subtotal - (appliedCoupon?.discount ?? 0) + shippingCost;
+      const res = await fetch("/api/checkout/apply-gift-card", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: giftCardCode.trim(), total: currentTotalBeforeGift }),
+      });
+      const data = await res.json() as { code: string; discount?: number; error?: string };
+
+      if (!res.ok) throw new Error(data.error ?? "Invalid gift card");
+
+      setAppliedGiftCard({ code: data.code, discount: data.discount ?? 0 });
+      toast.success("Gift card applied!");
+      setGiftCardCode("");
+    } catch (err: unknown) {
+      const e = err as Error;
+      toast.error(e.message ?? "Could not apply gift card");
+    } finally {
+      setGiftCardLoading(false);
+    }
+  }
+
   async function handlePlaceOrder() {
     // 1. Collect all data
     const contactData = contactForm.getValues();
@@ -197,6 +227,7 @@ export default function CheckoutPage() {
       ...addressData,
       paymentMethod,
       couponCode: appliedCoupon?.code,
+      giftCardCode: appliedGiftCard?.code,
     };
 
     setIsSubmitting(true);
@@ -551,6 +582,37 @@ export default function CheckoutPage() {
 
             <Separator />
 
+            {/* Gift Card */}
+            <div className="space-y-2">
+              {appliedGiftCard ? (
+                <div className="flex items-center justify-between p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Gift className="h-4 w-4 text-indigo-600" />
+                    <span className="font-mono font-medium text-indigo-700 dark:text-indigo-400">{appliedGiftCard.code}</span>
+                  </div>
+                  <button onClick={() => setAppliedGiftCard(null)} className="text-xs text-muted-foreground hover:text-destructive">Remove</button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Input 
+                    placeholder="Gift card code" 
+                    value={giftCardCode} 
+                    onChange={e => setGiftCardCode(e.target.value)} 
+                    className="rounded-xl"
+                  />
+                  <button 
+                    onClick={() => void handleApplyGiftCard()}
+                    disabled={giftCardLoading || !giftCardCode.trim()}
+                    className="inline-flex h-9 items-center justify-center rounded-xl bg-secondary px-4 text-sm font-medium transition-colors hover:bg-secondary/80 disabled:opacity-50"
+                  >
+                    {giftCardLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Apply"}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <Separator />
+
             {/* Totals */}
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -562,6 +624,13 @@ export default function CheckoutPage() {
                 <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
                   <span>Discount</span>
                   <span className="font-medium">−{formatCurrency(appliedCoupon.discount)}</span>
+                </div>
+              )}
+
+              {appliedGiftCard && (
+                <div className="flex justify-between text-indigo-600 dark:text-indigo-400">
+                  <span>Gift Card</span>
+                  <span className="font-medium">−{formatCurrency(appliedGiftCard.discount)}</span>
                 </div>
               )}
               

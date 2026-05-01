@@ -26,6 +26,7 @@ const checkoutSchema = z.object({
   saveAddress: z.boolean().optional(),
   paymentMethod: z.enum(["MPESA", "STRIPE"]),
   couponCode: z.string().optional(),
+  giftCardCode: z.string().optional(),
 });
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const {
       fullName, email, phone,
       addressLine1, addressLine2, city, county, postalCode, saveAddress,
-      paymentMethod, couponCode,
+      paymentMethod, couponCode, giftCardCode,
     } = parsed.data;
 
     const session = await auth();
@@ -91,7 +92,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
     }
 
-    const totalAmount = Math.max(0, subtotal - discount + shippingCost);
+    // 3.5. Gift Card Discount
+    let giftCardDiscount = 0;
+    let validGiftCardId: string | undefined;
+
+    if (giftCardCode) {
+      const gc = await prisma.giftCard.findUnique({ where: { code: giftCardCode.toUpperCase() } });
+      if (gc && gc.isActive && (!gc.expiresAt || new Date(gc.expiresAt) > new Date())) {
+        const remaining = Number(gc.remainingValue);
+        if (remaining > 0) {
+          validGiftCardId = gc.id;
+          giftCardDiscount = Math.min(remaining, Math.max(0, subtotal - discount + shippingCost));
+        }
+      }
+    }
+
+    const totalAmount = Math.max(0, subtotal - discount + shippingCost - giftCardDiscount);
 
     // 4. Create Order using Prisma Transaction
     const order = await prisma.$transaction(async (tx) => {
@@ -143,6 +159,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           paymentStatus: PaymentStatus.PENDING,
           couponId: validCouponId,
           couponCode: validCouponId ? couponCode : null,
+          giftCardCode: validGiftCardId ? giftCardCode.toUpperCase() : null,
+          giftCardDiscount: giftCardDiscount,
           items: {
             create: cart.items.map(item => {
               const uPrice = item.variant?.priceOverride ? Number(item.variant.priceOverride) : Number(item.product.price);
@@ -181,6 +199,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         await tx.coupon.update({
           where: { id: validCouponId },
           data: { usedCount: { increment: 1 } }
+        });
+      }
+
+      // f. Deduct Gift Card balance
+      if (validGiftCardId && giftCardDiscount > 0) {
+        await tx.giftCard.update({
+          where: { id: validGiftCardId },
+          data: {
+            remainingValue: { decrement: giftCardDiscount },
+            redeemedByCustomerId: customerId ?? null,
+            orderId: newOrder.id,
+          }
         });
       }
 
