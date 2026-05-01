@@ -10,6 +10,7 @@ import WishlistProvider from "@/components/store/wishlist-provider";
 import PwaInstallPrompt from "@/components/store/pwa-install-prompt";
 import { ChatWidget } from "@/components/store/chat-widget";
 import { prisma } from "@/lib/prisma";
+import { cn } from "@/lib/utils";
 
 export default async function StoreLayout({
   children,
@@ -17,12 +18,25 @@ export default async function StoreLayout({
   children: React.ReactNode;
 }) {
   const settings = await prisma.storeSettings.findFirst({
-    select: { storeName: true }
+    select: { 
+      storeName: true,
+      accentColor: true,
+      fontChoice: true,
+    }
   });
+
+  const accentColor = settings?.accentColor || "#3B82F6";
+  const fontClass = settings?.fontChoice === "POPPINS" ? "font-poppins" : 
+                    settings?.fontChoice === "LATO" ? "font-lato" :
+                    settings?.fontChoice === "NUNITO" ? "font-nunito" : "font-sans";
+
   return (
     <CartProvider>
       <WishlistProvider>
-        <div className="min-h-screen flex flex-col bg-background">
+        <div 
+          className={cn("min-h-screen flex flex-col bg-background", fontClass)}
+          style={{ "--primary": accentColor } as React.CSSProperties}
+        >
         <StoreHeaderServer />
         <CartDrawer />
         {/* pb-16 on mobile reserves space for the fixed bottom nav */}

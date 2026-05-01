@@ -137,6 +137,8 @@ model StoreSettings {
   businessHours   Json?
   enableStripe    Boolean    @default(true)
   enableMpesa     Boolean    @default(true)
+  whatsappOrderNotifications Boolean @default(false)
+  whatsappNotificationNumber String?
   metaTitle       String?
   metaDescription String?
   heroHeadline    String?

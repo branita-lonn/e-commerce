@@ -14,7 +14,9 @@ import {
   TrendingUp,
   MapPin,
   Eye,
-  ShoppingCart
+  ShoppingCart,
+  Package,
+  Tags
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -22,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { StatusBadge } from "@/components/dashboard/orders/status-badge";
+import { Badge } from "@/components/ui/badge";
 
 interface CustomerDetailPageProps {
   params: Promise<{ customerId: string }>;
