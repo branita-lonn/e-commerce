@@ -52,6 +52,12 @@ enum CouponType {
   FREE_SHIPPING
 }
 
+enum EngagementType {
+  VIEW
+  ADD_TO_CART
+  PURCHASE
+}
+
 // ─── AUTH MODELS ──────────────────────────────────────────────────────────────
 
 model User {
@@ -75,6 +81,7 @@ model User {
   stockAlerts  StockAlert[]
   reviews      Review[]
   reviewVotes  ReviewVote[]
+  engagements  Engagement[]
 }
 
 model Account {
@@ -152,6 +159,7 @@ model Product {
   isFeatured     Boolean  @default(false)
   isOnSale       Boolean  @default(false)
   stockQuantity  Int      @default(0)
+  lowStockThreshold Int   @default(5)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   categoryId     String?
@@ -164,6 +172,7 @@ model Product {
   wishlistItems WishlistItem[]
   stockAlerts   StockAlert[]
   reviews       Review[]
+  engagements   Engagement[]
 }
 
 model Category {
@@ -203,6 +212,7 @@ model ProductVariant {
   material      String?
   priceOverride Decimal?
   stockQuantity Int      @default(0)
+  lowStockThreshold Int   @default(5)
   sku           String?
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
@@ -442,4 +452,21 @@ model ReviewReply {
   updatedAt DateTime @updatedAt
 
   review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+}
+
+// ─── ANALYTICS ────────────────────────────────────────────────────────────────
+
+model Engagement {
+  id         String         @id @default(cuid())
+  type       EngagementType
+  productId  String
+  sessionId  String?
+  customerId String?
+  createdAt  DateTime       @default(now())
+
+  product  Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer User?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  @@index([productId, type])
+  @@index([createdAt])
 }

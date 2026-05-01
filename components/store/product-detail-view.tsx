@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ImageGallery from "@/components/store/image-gallery";
 import ProductInfo from "@/components/store/product-info";
 import { ProductWithRelationsSerialized } from "@/types";
@@ -15,6 +15,22 @@ interface ProductDetailViewProps {
 export default function ProductDetailView({ product }: ProductDetailViewProps) {
   // Lift colour state up to coordinate between gallery and info
   const [selectedColour, setSelectedColour] = useState<string | null>(null);
+
+  // Track product view engagement
+  useEffect(() => {
+    const trackView = async () => {
+      try {
+        await fetch(`/api/products/${product.slug}/view`, {
+          method: "POST",
+        });
+      } catch (error: unknown) {
+        // Silently fail for analytics tracking
+        console.error("Failed to track view:", error);
+      }
+    };
+
+    trackView();
+  }, [product.slug]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
