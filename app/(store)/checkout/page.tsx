@@ -179,15 +179,23 @@ export default function CheckoutPage() {
 
     setIsSubmitting(true);
     try {
-      // In a real commit, this calls /api/checkout.
-      // For now, we simulate success for the UI flow test.
-      // We will implement the real endpoint in Commit 3.
-      toast.info("Proceeding to payment...");
-      setTimeout(() => {
-        setIsSubmitting(false);
-        toast.success("Order simulated (API not wired yet)");
-      }, 1000);
+      toast.info("Processing order...");
       
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json() as { success?: boolean; orderId?: string; error?: string };
+
+      if (!res.ok) throw new Error(data.error ?? "Failed to place order");
+
+      if (data.success && data.orderId) {
+        toast.success("Order placed successfully!");
+        clearCart();
+        router.push(`/checkout/success/${data.orderId}`);
+      }
     } catch (err: unknown) {
       const e = err as Error;
       toast.error(e.message ?? "Failed to place order");
