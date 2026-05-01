@@ -42,10 +42,17 @@ export async function getOrCreateCart(
     });
     if (existing) return existing;
 
-    return prisma.cart.create({
-      data: { customerId },
-      ...cartWithItems,
-    });
+    // Check if user actually exists (to prevent FK constraint errors with stale sessions)
+    const userExists = await prisma.user.findUnique({ where: { id: customerId } });
+    if (userExists) {
+      return prisma.cart.create({
+        data: { customerId },
+        ...cartWithItems,
+      });
+    } else {
+      // Ignore customerId if the user record no longer exists
+      customerId = undefined;
+    }
   }
 
   // Fall back to sessionId for guests

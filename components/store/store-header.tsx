@@ -6,17 +6,32 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart, Heart, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StoreSearchBar from "@/components/store/store-search-bar";
 import { useCart } from "@/components/store/cart-provider";
+import { signOut } from "next-auth/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface StoreHeaderProps {
   storeName: string;
   logoUrl: string | null;
+  user?: {
+    name?: string | null;
+    email?: string | null;
+    role?: string | null;
+  };
 }
 
-export default function StoreHeader({ storeName, logoUrl }: StoreHeaderProps) {
+export default function StoreHeader({ storeName, logoUrl, user }: StoreHeaderProps) {
   const { itemCount, setIsOpen } = useCart();
 
   return (
@@ -54,6 +69,48 @@ export default function StoreHeader({ storeName, logoUrl }: StoreHeaderProps) {
               <Heart className="h-5 w-5" />
             </Button>
           </Link>
+
+          {/* User Account Dropdown */}
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="inline-flex items-center justify-center rounded-full h-10 w-10 hover:bg-accent hover:text-accent-foreground shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" aria-label="Account menu">
+                <User className="h-5 w-5" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>{user.name || user.email || "My Account"}</DropdownMenuLabel>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                {user.role === "ADMIN" && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin">Seller Dashboard</Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem asChild>
+                  <Link href="/account">Account Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => void signOut()}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="inline-flex items-center justify-center rounded-full h-10 w-10 hover:bg-accent hover:text-accent-foreground shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" aria-label="Account menu">
+                <User className="h-5 w-5" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link href="/auth/login">Log in</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/auth/register">Register</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
           {/* Cart icon — opens drawer */}
           <Button

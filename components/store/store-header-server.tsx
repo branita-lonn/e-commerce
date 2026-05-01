@@ -3,6 +3,7 @@
 
 import { prisma } from "@/lib/prisma";
 import StoreHeader from "@/components/store/store-header";
+import { auth } from "@/auth";
 
 export default async function StoreHeaderServer() {
   const settings = await prisma.storeSettings.findFirst({
@@ -12,10 +13,13 @@ export default async function StoreHeaderServer() {
     },
   });
 
+  const session = await auth();
+
   return (
     <StoreHeader
       storeName={settings?.storeName ?? "MiDuka"}
       logoUrl={settings?.logoUrl ?? null}
+      user={session?.user}
     />
   );
 }
