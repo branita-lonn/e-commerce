@@ -232,7 +232,8 @@ export default function AddressForm({ initialData, onSubmit }: AddressFormProps)
             disabled={loading}
             className="rounded-2xl px-8 shadow-md"
           >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {/* A11Y: Added role and label to spinner */}
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" role="status" aria-label="Loading" />}
             {initialData ? "Update Address" : "Save Address"}
           </Button>
         </div>

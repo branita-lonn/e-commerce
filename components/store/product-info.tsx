@@ -284,7 +284,8 @@ export default function ProductInfo({
               aria-label="Decrease quantity"
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
               disabled={quantity <= 1}
-              className="px-4 py-2.5 text-lg font-medium hover:bg-muted transition-colors disabled:opacity-40"
+              {/* A11Y: Min touch target 44px */}
+              className="h-11 w-11 flex items-center justify-center text-lg font-medium hover:bg-muted transition-colors disabled:opacity-40"
             >
               −
             </button>
@@ -295,7 +296,8 @@ export default function ProductInfo({
               aria-label="Increase quantity"
               onClick={() => setQuantity((q) => Math.min(stockQty, q + 1))}
               disabled={quantity >= stockQty}
-              className="px-4 py-2.5 text-lg font-medium hover:bg-muted transition-colors disabled:opacity-40"
+              {/* A11Y: Min touch target 44px */}
+              className="h-11 w-11 flex items-center justify-center text-lg font-medium hover:bg-muted transition-colors disabled:opacity-40"
             >
               +
             </button>

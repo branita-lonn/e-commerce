@@ -72,20 +72,20 @@ function CartItemRow({ item }: { item: CartWithItems["items"][number] }) {
           <button
             aria-label="Decrease quantity"
             onClick={() => void updateQuantity(item.id, item.quantity - 1)}
-            className="flex h-6 w-6 items-center justify-center rounded-full border border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors disabled:opacity-40"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors disabled:opacity-40"
             disabled={item.quantity <= 1}
           >
-            <Minus className="h-3 w-3" />
+            <Minus className="h-4 w-4" />
           </button>
-          <span className="w-6 text-center text-sm font-medium">
+          <span className="w-8 text-center text-sm font-medium">
             {item.quantity}
           </span>
           <button
             aria-label="Increase quantity"
             onClick={() => void updateQuantity(item.id, item.quantity + 1)}
-            className="flex h-6 w-6 items-center justify-center rounded-full border border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors"
           >
-            <Plus className="h-3 w-3" />
+            <Plus className="h-4 w-4" />
           </button>
         </div>
       </div>

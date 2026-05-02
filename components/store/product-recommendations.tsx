@@ -40,7 +40,8 @@ export default function ProductRecommendations({ productSlug }: ProductRecommend
   if (loading) {
     return (
       <div className="flex justify-center py-12 animate-in fade-in duration-500">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        {/* A11Y: Added role and label to spinner */}
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" role="status" aria-label="Loading" />
       </div>
     );
   }

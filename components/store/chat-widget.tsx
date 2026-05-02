@@ -174,7 +174,8 @@ export function ChatWidget({ storeName }: { storeName: string }) {
             {isLoading && !isStreaming && (
               <div className="flex max-w-[85%] mr-auto items-start">
                 <div className="rounded-3xl rounded-tl-none bg-muted px-4 py-2">
-                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  {/* A11Y: Added role and label to spinner */}
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" role="status" aria-label="Loading" />
                 </div>
               </div>
             )}

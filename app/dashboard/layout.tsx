@@ -63,7 +63,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </header>
 
         {/* Scrollable Main Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 relative">
+        {/* A11Y: Added main-content id for skip link */}
+        <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-8 relative">
           {children}
         </main>
       </div>

@@ -72,7 +72,8 @@ export default function StoreHeader({ storeName, logoUrl, logoBlurDataUrl, user 
         </Link>
 
         {/* Desktop Nav Links */}
-        <nav className="hidden md:flex items-center gap-6 ml-4">
+        {/* A11Y: Added aria-label to nav */}
+        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-6 ml-4">
           {NAV_LINKS.map((link) => {
             const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
             return (

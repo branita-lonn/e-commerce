@@ -56,7 +56,8 @@ export default async function StoreLayout({
         <StoreHeaderServer />
         <CartDrawer />
         {/* pb-16 on mobile reserves space for the fixed bottom nav */}
-        <main className="flex-1 pb-16 md:pb-0">{children}</main>
+        {/* A11Y: Added main-content id for skip link */}
+        <main id="main-content" className="flex-1 pb-16 md:pb-0">{children}</main>
         <StoreFooter />
         <MobileBottomNav />
         <PwaInstallPrompt />

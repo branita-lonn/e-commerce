@@ -147,7 +147,8 @@ export function ReviewsSection({
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-10 w-10 animate-spin text-primary/40" />
+          {/* A11Y: Added role and label to spinner */}
+          <Loader2 className="h-10 w-10 animate-spin text-primary/40" role="status" aria-label="Loading" />
           <p className="text-muted-foreground text-sm animate-pulse">Loading reviews...</p>
         </div>
       ) : reviews.length > 0 ? (

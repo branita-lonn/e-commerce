@@ -33,7 +33,8 @@ export default async function AccountLayout({ children }: { children: React.Reac
         <aside className="shrink-0 z-30">
           <AccountSidebar customer={customer} />
         </aside>
-        <main className="flex-1 min-w-0">
+        {/* A11Y: Added main-content id for skip link */}
+        <main id="main-content" className="flex-1 min-w-0">
           {children}
         </main>
       </div>

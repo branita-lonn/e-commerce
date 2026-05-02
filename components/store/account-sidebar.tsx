@@ -95,7 +95,8 @@ export default function AccountSidebar({ customer }: AccountSidebarProps) {
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-1 p-2 overflow-y-auto overflow-x-hidden">
+        {/* A11Y: Added aria-label to nav */}
+        <nav aria-label="Account navigation" className="flex-1 p-2 overflow-y-auto overflow-x-hidden">
           <ul className="space-y-1">
             {navItems.map((item) => {
               const isActive = pathname.startsWith(item.href);

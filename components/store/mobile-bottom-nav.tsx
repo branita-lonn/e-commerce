@@ -23,8 +23,10 @@ export default function MobileBottomNav() {
   const { itemCount } = useCart();
 
   return (
-    <nav
-      aria-label="Mobile bottom navigation"
+    <>
+      {/* A11Y: Ensured aria-label on nav */}
+      <nav
+        aria-label="Mobile bottom navigation"
       className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-card border-t border-border shadow-lg"
     >
       <div className="flex items-stretch justify-around h-16">
@@ -59,5 +61,6 @@ export default function MobileBottomNav() {
         })}
       </div>
     </nav>
+    </>
   );
 }

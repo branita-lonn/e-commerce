@@ -92,6 +92,12 @@ export default async function RootLayout({
         </Script>
       </head>
       <body className={`${inter.variable} ${poppins.variable} ${lato.variable} ${nunito.variable} bg-background text-foreground`}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-background focus:px-4 focus:py-2 focus:rounded-full focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
         <SessionProvider>
           <ThemeProvider
             attribute="class"
