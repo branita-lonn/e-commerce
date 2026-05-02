@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency, cn } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 import { StatusBadge } from "@/components/dashboard/orders/status-badge";
 import { Badge } from "@/components/ui/badge";
 
@@ -76,8 +77,8 @@ export default async function CustomerDetailPage({ params }: CustomerDetailPageP
           </Button>
         </Link>
         <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl border border-border/50 overflow-hidden">
-                {user.image ? <img src={user.image} className="w-full h-full object-cover" /> : <span>{user.name?.charAt(0)}</span>}
+            <div className="relative h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl border border-border/50 overflow-hidden">
+                {user.image ? <Image src={user.image} alt={user.name || ""} fill className="object-cover" sizes="48px" unoptimized /> : <span>{user.name?.charAt(0)}</span>}
             </div>
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">{user.name || "Unnamed Customer"}</h1>

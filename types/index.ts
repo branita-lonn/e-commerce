@@ -56,7 +56,7 @@ export interface ProductPublic {
   updatedAt: string;
   categoryId: string | null;
   category: { id: string; name: string; slug: string } | null;
-  images: ProductImagePublic[];
+  images: { id: string; url: string; blurDataUrl?: string | null; altText?: string | null; colour?: string | null }[];
   variants: ProductVariantPublic[];
   rating: number;
   reviewCount: number;
@@ -85,6 +85,7 @@ export interface ProductCardProps {
   price: number;
   compareAtPrice?: number | null;
   primaryImage?: string | null;
+  blurDataUrl?: string | null;
   category?: { name: string; slug: string } | null;
   isOnSale?: boolean;
   isFeatured?: boolean;

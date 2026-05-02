@@ -169,11 +169,13 @@ export function ReviewCard({ review, currentUserId, onEdit, onVoteSuccess }: Rev
                 </div>
               </DialogTrigger>
               <DialogContent className="max-w-4xl p-0 border-none bg-transparent shadow-none">
-                <div className="relative aspect-auto max-h-[90vh] flex items-center justify-center">
-                  <img
+                <div className="relative w-full h-[90vh] flex items-center justify-center">
+                  <Image
                     src={photo}
                     alt="Full size review photo"
-                    className="max-w-full max-h-[90vh] rounded-3xl object-contain"
+                    fill
+                    className="rounded-3xl object-contain"
+                    sizes="100vw"
                   />
                 </div>
               </DialogContent>

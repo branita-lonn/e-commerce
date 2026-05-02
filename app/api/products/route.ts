@@ -62,7 +62,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     const include = {
       category: { select: { id: true, name: true, slug: true } },
-      images: { select: { id: true, url: true, altText: true, sortOrder: true }, orderBy: { sortOrder: "asc" } as const },
+      images: { select: { id: true, url: true, altText: true, sortOrder: true, blurDataUrl: true }, orderBy: { sortOrder: "asc" } as const },
       variants: {
         where: { isActive: true },
         select: {
@@ -161,6 +161,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       images: p.images.map((img) => ({
         id: img.id,
         url: img.url,
+        blurDataUrl: img.blurDataUrl,
         altText: img.altText,
         sortOrder: img.sortOrder,
       })),

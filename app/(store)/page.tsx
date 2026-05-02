@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 // ─── Serialization helper ──────────────────────────────────────────────────
 type RawProduct = Prisma.ProductGetPayload<{
   include: {
-    images: { select: { url: true; sortOrder: true } };
+    images: { select: { url: true; blurDataUrl: true; sortOrder: true } };
     category: { select: { name: true; slug: true } };
     reviews: { select: { rating: true } };
     flashSale: true;
@@ -38,6 +38,7 @@ function toCardProps(p: RawProduct) {
     price: Number(p.price),
     compareAtPrice: p.compareAtPrice ? Number(p.compareAtPrice) : null,
     primaryImage: p.images.sort((a, b) => a.sortOrder - b.sortOrder)[0]?.url ?? null,
+    blurDataUrl: p.images.sort((a, b) => a.sortOrder - b.sortOrder)[0]?.blurDataUrl ?? null,
     category: p.category ? { name: p.category.name, slug: p.category.slug } : null,
     isOnSale: p.isOnSale,
     isFeatured: p.isFeatured,
@@ -53,7 +54,7 @@ function toCardProps(p: RawProduct) {
 }
 
 const PRODUCT_INCLUDE = {
-  images: { select: { url: true as const, sortOrder: true as const } },
+  images: { select: { url: true as const, blurDataUrl: true as const, sortOrder: true as const } },
   category: { select: { name: true as const, slug: true as const } },
   reviews: { select: { rating: true as const } },
   flashSale: true,

@@ -127,6 +127,7 @@ export default function ProductGrid({ defaultCategory, defaultQ }: ProductGridPr
             price={p.price}
             compareAtPrice={p.compareAtPrice}
             primaryImage={p.images[0]?.url ?? null}
+            blurDataUrl={p.images[0]?.blurDataUrl ?? null}
             category={p.category}
             isOnSale={p.isOnSale}
             isFeatured={p.isFeatured}

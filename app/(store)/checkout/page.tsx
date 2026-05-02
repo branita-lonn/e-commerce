@@ -531,11 +531,12 @@ export default function CheckoutPage() {
               {items.map((item) => {
                 const price = item.variant?.priceOverride ? Number(item.variant.priceOverride) : Number(item.product.price);
                 const primaryImage = item.product.images[0]?.url;
+                const blurDataUrl = item.product.images[0]?.blurDataUrl;
                 const vLabel = [item.variant?.colour, item.variant?.size, item.variant?.material].filter(Boolean).join(" / ");
                 return (
                   <div key={item.id} className="flex gap-4">
                     <div className="relative h-16 w-16 rounded-xl overflow-hidden bg-muted border border-border flex-shrink-0">
-                      {primaryImage && <Image src={primaryImage} alt="" fill className="object-cover" sizes="64px" />}
+                      {primaryImage && <Image src={primaryImage} alt="" fill className="object-cover" sizes="64px" {...(blurDataUrl ? { placeholder: "blur", blurDataURL: blurDataUrl } : {})} />}
                       <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground z-10 shadow-sm border border-background">
                         {item.quantity}
                       </span>

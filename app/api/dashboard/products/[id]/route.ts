@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { generateUniqueSlug } from "@/lib/generate-slug";
+import { generateBlurDataUrl } from "@/lib/cloudinary-blur";
 
 export async function GET(
   req: NextRequest,
@@ -116,10 +117,14 @@ export async function PUT(
         if (images.length > 0) {
           for (let i = 0; i < images.length; i++) {
             const img = images[i];
+            const url = typeof img === "string" ? img : img.url;
+            const blurDataUrl = await generateBlurDataUrl(url);
+
             await tx.productImage.create({
               data: {
                 productId,
-                url: typeof img === "string" ? img : img.url,
+                url,
+                blurDataUrl,
                 colour: typeof img === "string" ? null : (img.colour || null),
                 sortOrder: i,
               },

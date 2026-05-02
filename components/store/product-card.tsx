@@ -34,6 +34,7 @@ export default function ProductCard({
   priority = false,
   id,
   flashSale,
+  blurDataUrl,
 }: ProductCardProps) {
   const { isWishlisted, toggleWishlist, isLoading } = useWishlist();
   const wishlisted = isWishlisted(id);
@@ -69,6 +70,7 @@ export default function ProductCard({
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             priority={priority}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
+            {...(blurDataUrl ? { placeholder: "blur", blurDataURL: blurDataUrl } : {})}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">

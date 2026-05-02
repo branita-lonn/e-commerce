@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { generateUniqueSlug } from "@/lib/generate-slug";
 import { computeCompleteness } from "@/lib/product-completeness";
 import { ProductWithRelations } from "@/types";
+import { generateBlurDataUrl } from "@/lib/cloudinary-blur";
 
 export async function GET(_req: NextRequest) {
   try {
@@ -100,10 +101,14 @@ export async function POST(req: NextRequest) {
       if (images && images.length > 0) {
         for (let i = 0; i < images.length; i++) {
           const img = images[i];
+          const url = typeof img === "string" ? img : img.url;
+          const blurDataUrl = await generateBlurDataUrl(url);
+          
           await tx.productImage.create({
             data: {
               productId: newProduct.id,
-              url: typeof img === "string" ? img : img.url,
+              url,
+              blurDataUrl,
               colour: typeof img === "string" ? null : (img.colour || null),
               sortOrder: i,
             },

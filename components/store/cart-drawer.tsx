@@ -33,6 +33,7 @@ function CartItemRow({ item }: { item: CartWithItems["items"][number] }) {
     .join(" / ");
 
   const primaryImage = item.product.images[0]?.url ?? null;
+  const blurDataUrl = item.product.images[0]?.blurDataUrl ?? null;
 
   return (
     <div className="flex items-start gap-3 py-3">
@@ -45,6 +46,7 @@ function CartItemRow({ item }: { item: CartWithItems["items"][number] }) {
             fill
             className="object-cover"
             sizes="64px"
+            {...(blurDataUrl ? { placeholder: "blur", blurDataURL: blurDataUrl } : {})}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">

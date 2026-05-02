@@ -9,7 +9,7 @@ import { ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ImageGalleryProps {
-  images: { id: string; url: string; altText: string | null; colour?: string | null }[];
+  images: { id: string; url: string; altText: string | null; colour?: string | null; blurDataUrl?: string | null }[];
   productName: string;
   selectedColour?: string | null;
 }
@@ -47,6 +47,7 @@ export default function ImageGallery({ images, productName, selectedColour }: Im
           loading="eager"
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover transition-opacity duration-300"
+          {...(images[activeIndex].blurDataUrl ? { placeholder: "blur", blurDataURL: images[activeIndex].blurDataUrl } : {})}
         />
       </div>
 
@@ -70,6 +71,7 @@ export default function ImageGallery({ images, productName, selectedColour }: Im
                 fill
                 sizes="80px"
                 className="object-cover"
+                {...(img.blurDataUrl ? { placeholder: "blur", blurDataURL: img.blurDataUrl } : {})}
               />
             </button>
           ))}

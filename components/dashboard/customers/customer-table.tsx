@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
+import Image from "next/image";
 import { 
   Search, 
   Download, 
@@ -157,7 +158,7 @@ export function CustomerTable({ customers }: CustomerTableProps) {
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden relative border border-border/50">
                         {c.image ? (
-                          <img src={c.image} alt={c.name || ""} className="object-cover w-full h-full" />
+                          <Image src={c.image} alt={c.name || ""} fill className="object-cover" sizes="40px" unoptimized />
                         ) : (
                           <span>{c.name?.charAt(0) || "U"}</span>
                         )}
