@@ -5,9 +5,10 @@ import { auth } from "@/auth";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     const session = await auth();
 
     if (!session || session.user.role !== "STORE_OWNER") {
@@ -21,9 +22,9 @@ export async function PUT(
     }
 
     const updatedPage = await prisma.staticPage.upsert({
-      where: { slug: params.slug },
+      where: { slug: slug },
       update: { title, content },
-      create: { slug: params.slug, title, content },
+      create: { slug: slug, title, content },
     });
 
     return NextResponse.json(updatedPage);

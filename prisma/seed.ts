@@ -340,7 +340,7 @@ async function main() {
 
   // --- SECTION 8: Flash Sale ---
   console.log("Seeding Flash Sale...");
-  const flashProduct = allProducts.find(p => p.price > 3000);
+  const flashProduct = allProducts.find(p => Number(p.price) > 3000);
   if (flashProduct) {
     const existingSale = await prisma.flashSale.findUnique({ where: { productId: flashProduct.id }});
     if (!existingSale) {
