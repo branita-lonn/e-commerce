@@ -36,8 +36,10 @@ export function FlashSaleCountdown({ endTime }: FlashSaleCountdownProps) {
   }, [endTime]);
 
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft());
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const timer = setInterval(() => {
       const updated = calculateTimeLeft();
       setTimeLeft(updated);
@@ -49,6 +51,22 @@ export function FlashSaleCountdown({ endTime }: FlashSaleCountdownProps) {
 
     return () => clearInterval(timer);
   }, [calculateTimeLeft]);
+
+  if (!mounted) {
+    return (
+      <div className="space-y-2">
+        <p className="text-xs font-semibold text-primary uppercase tracking-wider flex items-center gap-2">
+          <Timer className="h-3 w-3" />
+          Ends in:
+        </p>
+        <div className="flex items-center gap-2 opacity-50">
+          <TimeUnit value={0} label="h" />
+          <TimeUnit value={0} label="m" />
+          <TimeUnit value={0} label="s" />
+        </div>
+      </div>
+    );
+  }
 
   if (timeLeft.isExpired) {
     return (

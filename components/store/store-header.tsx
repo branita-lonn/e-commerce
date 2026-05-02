@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import StoreSearchBar from "@/components/store/store-search-bar";
 import { useCart } from "@/components/store/cart-provider";
 import { signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +36,13 @@ interface StoreHeaderProps {
 
 export default function StoreHeader({ storeName, logoUrl, logoBlurDataUrl, user }: StoreHeaderProps) {
   const { itemCount, setIsOpen } = useCart();
+  const pathname = usePathname();
+
+  const NAV_LINKS = [
+    { href: "/", label: "Home" },
+    { href: "/categories", label: "Categories" },
+    { href: "/search", label: "Products" },
+  ];
 
   return (
     <header className="sticky top-0 z-40 w-full bg-card border-b border-border">
@@ -61,11 +70,29 @@ export default function StoreHeader({ storeName, logoUrl, logoBlurDataUrl, user 
           )}
         </Link>
 
+        {/* Desktop Nav Links */}
+        <nav className="hidden md:flex items-center gap-6 ml-4">
+          {NAV_LINKS.map((link) => {
+            const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+            return (
+              <Link 
+                key={link.href} 
+                href={link.href} 
+                className={`text-sm font-medium transition-colors hover:text-primary ${isActive ? "text-primary font-bold" : "text-muted-foreground"}`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+
         {/* Search bar (desktop center + mobile icon) */}
         <StoreSearchBar />
 
         {/* Right actions */}
         <div className="flex items-center gap-1 ml-auto flex-shrink-0">
+          <ThemeToggle />
+
           <Link href="/account/wishlist" aria-label="Wishlist">
             <Button variant="ghost" size="icon" className="rounded-full">
               <Heart className="h-5 w-5" />

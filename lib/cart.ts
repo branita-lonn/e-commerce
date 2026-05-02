@@ -13,6 +13,7 @@ const cartWithItems = Prisma.validator<Prisma.CartDefaultArgs>()({
         product: {
           include: {
             images: { orderBy: { sortOrder: "asc" }, take: 1 },
+            flashSale: true,
           },
         },
         variant: true,

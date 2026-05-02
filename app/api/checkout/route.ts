@@ -58,7 +58,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // 1. Calculate Totals & Validate Stock again
     let subtotal = 0;
     for (const item of cart.items) {
-      const price = item.variant?.priceOverride ? Number(item.variant.priceOverride) : Number(item.product.price);
+      let price = item.variant?.priceOverride ? Number(item.variant.priceOverride) : Number(item.product.price);
+
+      if (item.product.flashSale) {
+        const now = new Date();
+        const startTime = new Date(item.product.flashSale.startTime);
+        const endTime = new Date(item.product.flashSale.endTime);
+        if (now >= startTime && now <= endTime) {
+          price = Number(item.product.flashSale.salePrice);
+        }
+      }
+
       subtotal += price * item.quantity;
 
       const availableStock = item.variant ? item.variant.stockQuantity : item.product.stockQuantity;
@@ -163,7 +173,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           giftCardDiscount: giftCardDiscount,
           items: {
             create: cart.items.map(item => {
-              const uPrice = item.variant?.priceOverride ? Number(item.variant.priceOverride) : Number(item.product.price);
+              let uPrice = item.variant?.priceOverride ? Number(item.variant.priceOverride) : Number(item.product.price);
+              if (item.product.flashSale) {
+                const now = new Date();
+                const startTime = new Date(item.product.flashSale.startTime);
+                const endTime = new Date(item.product.flashSale.endTime);
+                if (now >= startTime && now <= endTime) {
+                  uPrice = Number(item.product.flashSale.salePrice);
+                }
+              }
               const vLabel = [item.variant?.colour, item.variant?.size, item.variant?.material].filter(Boolean).join(" / ");
               return {
                 productId: item.productId,

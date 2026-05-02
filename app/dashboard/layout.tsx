@@ -1,15 +1,12 @@
-// app/dashboard/layout.tsx
-// Seller dashboard layout
-
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
-import { LayoutDashboard, Package, Tags, ShoppingCart, Users, BarChart, Settings, Menu, MessageSquare, Zap, Gift, Boxes } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { OrderNotificationListener } from "@/components/dashboard/order-notification-listener";
 import { Metadata } from "next";
+import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 
 export const metadata: Metadata = {
   title: {
@@ -21,54 +18,6 @@ export const metadata: Metadata = {
   },
 };
 
-const navLinks = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/products", label: "Products", icon: Package },
-  { href: "/dashboard/categories", label: "Categories", icon: Tags },
-  { href: "/dashboard/inventory", label: "Inventory", icon: Package },
-  { href: "/dashboard/orders", label: "Orders", icon: ShoppingCart },
-  { href: "/dashboard/customers", label: "Customers", icon: Users },
-  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart },
-  { href: "/dashboard/flash-sales", label: "Flash Sales", icon: Zap },
-  { href: "/dashboard/bundles", label: "Bundle Deals", icon: Boxes },
-  { href: "/dashboard/gift-cards", label: "Gift Cards", icon: Gift },
-  { href: "/dashboard/reviews", label: "Reviews", icon: MessageSquare },
-  { href: "/dashboard/settings", label: "Store Settings", icon: Settings },
-];
-
-function SidebarContent({ storeName }: { storeName: string }) {
-  return (
-    <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center px-6 border-b border-border">
-        <span className="text-xl font-bold text-primary">{storeName}</span>
-      </div>
-      <div className="flex-1 py-4 space-y-1 overflow-y-auto">
-        {navLinks.map((link) => {
-          const Icon = link.icon;
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="flex items-center gap-3 px-6 py-3 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-            >
-              <Icon className="h-4 w-4" />
-              {link.label}
-            </Link>
-          );
-        })}
-      </div>
-      <div className="p-4 border-t border-border">
-        <Link
-          href="/"
-          className="flex w-full items-center justify-center gap-2 rounded-4xl bg-muted px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          View Store
-        </Link>
-      </div>
-    </div>
-  );
-}
-
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
@@ -78,32 +27,43 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const storeSettings = await prisma.storeSettings.findFirst();
   const storeName = storeSettings?.storeName || "MiDuka";
+  const userName = session.user.name || session.user.email || "Admin";
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       <OrderNotificationListener />
-      {/* Desktop Sidebar */}
-      <aside className="hidden w-64 border-r border-border bg-card md:block">
-        <SidebarContent storeName={storeName} />
+      
+      {/* Desktop Sidebar (Fixed) */}
+      <aside className="hidden w-64 border-r border-border bg-card md:flex flex-col shrink-0 h-full z-20">
+        <DashboardSidebar storeName={storeName} />
       </aside>
 
-      {/* Mobile Header & Sidebar */}
-      <div className="flex flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b border-border bg-card px-4 md:hidden">
-          <span className="text-xl font-bold text-primary">{storeName}</span>
-          <Sheet>
-            <SheetTrigger className="md:hidden flex h-10 w-10 items-center justify-center rounded-md hover:bg-muted hover:text-foreground transition-colors">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle navigation menu</span>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
-              <SidebarContent storeName={storeName} />
-            </SheetContent>
-          </Sheet>
+      {/* Main Content Area */}
+      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
+        {/* Unified Header */}
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-card px-4 md:px-8 z-10">
+          <div className="flex items-center gap-4">
+            <Sheet>
+              <SheetTrigger className="md:hidden flex h-10 w-10 items-center justify-center rounded-md hover:bg-muted hover:text-foreground transition-colors">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-0">
+                <SheetTitle className="sr-only">Menu</SheetTitle>
+                <SheetDescription className="sr-only">Dashboard Navigation</SheetDescription>
+                <DashboardSidebar storeName={storeName} />
+              </SheetContent>
+            </Sheet>
+            <span className="text-xl font-bold text-primary md:hidden">{storeName}</span>
+          </div>
+
+          <div className="ml-auto flex items-center">
+            <DashboardHeader userName={userName} />
+          </div>
         </header>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 md:p-8">
+        {/* Scrollable Main Content */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 relative">
           {children}
         </main>
       </div>

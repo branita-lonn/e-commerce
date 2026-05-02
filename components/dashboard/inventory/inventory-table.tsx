@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { 
   Table, 
   TableBody, 
@@ -160,8 +160,8 @@ export function InventoryTable({ initialProducts }: InventoryTableProps) {
               const isExpanded = expandedRows[product.id];
 
               return (
-                <>
-                  <TableRow key={product.id} className={cn("hover:bg-muted/20 transition-colors", isExpanded && "bg-muted/10")}>
+                <React.Fragment key={product.id}>
+                  <TableRow className={cn("hover:bg-muted/20 transition-colors", isExpanded && "bg-muted/10")}>
                     <TableCell>
                       {hasVariants && (
                         <Button variant="ghost" size="icon" onClick={() => toggleExpand(product.id)}>
@@ -277,7 +277,7 @@ export function InventoryTable({ initialProducts }: InventoryTableProps) {
                       </TableRow>
                     );
                   })}
-                </>
+                </React.Fragment>
               );
             })}
           </TableBody>

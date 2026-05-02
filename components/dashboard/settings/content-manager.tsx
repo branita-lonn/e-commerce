@@ -24,6 +24,9 @@ import { Loader2, Save, Layout, ExternalLink, Image as ImageIcon } from "lucide-
 import { ImageUpload } from "@/components/dashboard/image-upload";
 import Image from "next/image";
 
+const contentSchema = z.object({
+  heroHeadline: z.string().optional(),
+  heroSubheadline: z.string().optional(),
   heroImageUrl: z.string().optional(),
   heroBlurDataUrl: z.string().optional().nullable(),
   heroCtaText: z.string().optional(),

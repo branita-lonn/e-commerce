@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import crypto from "crypto";
 import { resend } from "@/lib/mail";
 import { GiftCardEmail } from "@/emails/gift-card";
+import React from "react";
 
 export async function POST(req: NextRequest) {
   try {
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
         from: `MiDuka <onboarding@resend.dev>`, // Replace with verified domain in production
         to: targetEmail,
         subject: `Your ${storeName} Gift Card has arrived!`,
-        react: GiftCardEmail({
+        react: React.createElement(GiftCardEmail, {
           recipientName: recipientName || "Valued Customer",
           senderName: senderName || "Someone Special",
           code,

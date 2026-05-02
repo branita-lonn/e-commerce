@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { Loader2, Save, Image as ImageIcon, Search, Globe } from "lucide-react";
 import { ImageUpload } from "@/components/dashboard/image-upload";
 
+const brandingSchema = z.object({
   logoUrl: z.string().optional(),
   logoBlurDataUrl: z.string().optional().nullable(),
   faviconUrl: z.string().optional(),

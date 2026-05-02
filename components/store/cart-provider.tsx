@@ -55,6 +55,16 @@ function getItemPrice(item: CartWithItems["items"][number]): number {
   if (item.variant?.priceOverride) {
     return Number(item.variant.priceOverride);
   }
+  
+  if (item.product.flashSale) {
+    const now = new Date();
+    const startTime = new Date(item.product.flashSale.startTime);
+    const endTime = new Date(item.product.flashSale.endTime);
+    if (now >= startTime && now <= endTime) {
+      return Number(item.product.flashSale.salePrice);
+    }
+  }
+
   return Number(item.product.price);
 }
 

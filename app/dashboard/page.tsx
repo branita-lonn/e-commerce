@@ -2,6 +2,8 @@
 // Seller dashboard home page
 
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { formatCurrency } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, ShoppingBag, Users, PackageOpen } from "lucide-react";
 
@@ -9,11 +11,32 @@ export default async function DashboardPage() {
   const session = await auth();
   const userName = session?.user?.name || "Store Owner";
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const [revenueResult, ordersToday, activeProducts, totalCustomers] = await Promise.all([
+    prisma.order.aggregate({
+      _sum: { total: true },
+      where: { status: { in: ["CONFIRMED", "SHIPPED", "DELIVERED"] } }
+    }),
+    prisma.order.count({
+      where: { createdAt: { gte: today } }
+    }),
+    prisma.product.count({
+      where: { isActive: true }
+    }),
+    prisma.user.count({
+      where: { role: "CUSTOMER" }
+    })
+  ]);
+
+  const totalRevenue = Number(revenueResult._sum.total || 0);
+
   const statCards = [
-    { title: "Total Revenue", value: "KES 0", icon: DollarSign },
-    { title: "Orders Today", value: "0", icon: ShoppingBag },
-    { title: "Active Products", value: "0", icon: PackageOpen },
-    { title: "Total Customers", value: "0", icon: Users },
+    { title: "Total Revenue", value: formatCurrency(totalRevenue), icon: DollarSign },
+    { title: "Orders Today", value: ordersToday.toString(), icon: ShoppingBag },
+    { title: "Active Products", value: activeProducts.toString(), icon: PackageOpen },
+    { title: "Total Customers", value: totalCustomers.toString(), icon: Users },
   ];
 
   return (
