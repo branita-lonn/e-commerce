@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MiDuka - Modern Single-Seller E-commerce Platform
 
-## Getting Started
+MiDuka is a premium, high-performance e-commerce platform built with Next.js 15, Prisma, and Tailwind CSS. It features a stunning, PWA-ready storefront, a powerful seller dashboard, AI-powered search, and multi-channel payments (Stripe & M-Pesa).
 
-First, run the development server:
+## 🚀 Tech Stack
 
+- **Framework:** Next.js 15 (App Router)
+- **Database:** PostgreSQL (Neon.tech) with Prisma ORM
+- **Auth:** NextAuth.js v5
+- **Styling:** Tailwind CSS + Shadcn UI
+- **AI:** Google Gemini (Shopping Assistant) & Groq (Search Expansion)
+- **Payments:** Stripe (Global) & M-Pesa Daraja (Kenya)
+- **Storage:** Cloudinary
+- **Email:** Resend
+
+## 🛠️ Getting Started
+
+### 1. Clone & Install
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/single-seller.git
+cd single-seller
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Setup
+Copy `.env.example` to `.env` and fill in your credentials.
+```bash
+cp .env.example .env
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Database Initialization
+```bash
+npx prisma db push
+npm run seed
+```
+The seed script is **idempotent** and populates the database with:
+- Store settings & owner account
+- 30+ products with variants & images
+- Categories, Customers, and sample Orders
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Run Locally
+```bash
+npm run dev
+```
 
-## Learn More
+## 📦 Deployment (Vercel + Neon)
 
-To learn more about Next.js, take a look at the following resources:
+### Database (Neon.tech)
+1. Create a project on [Neon](https://neon.tech).
+2. Get your Connection String (Pooling/PGBouncer enabled).
+3. Set `DATABASE_URL` and `DIRECT_URL` in Vercel.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Webhook Configuration
+- **Stripe:** Point webhooks to `https://your-domain.com/api/webhooks/stripe`.
+- **M-Pesa:** Point callbacks to `https://your-domain.com/api/webhooks/mpesa`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Build & Deploy
+Push to GitHub and connect your repository to Vercel. Vercel will automatically detect the Next.js project and deploy.
 
-## Deploy on Vercel
+## 📝 Key Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **PWA Ready:** Installable on iOS/Android with offline-first design.
+- **AI Assistant:** Context-aware shopping bot and smart search expansion.
+- **Dynamic Storefront:** Highly configurable via the Seller Dashboard.
+- **Static Pages:** Manage About, Contact, and Policies via a markdown editor.
+- **SEO Optimized:** Dynamic metadata, breadcrumb schemas, and sitemaps.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+This project is licensed under the MIT License.
