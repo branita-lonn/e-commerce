@@ -180,10 +180,6 @@ export default async function CheckoutSuccessPage({
           </div>
         </div>
       </div>
-
-        </Link>
-      </div>
-
       {settings?.whatsappEnabled && settings?.whatsappNumber && (
         <div className="mt-4 flex flex-col items-center gap-2">
           <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest">Optional</p>

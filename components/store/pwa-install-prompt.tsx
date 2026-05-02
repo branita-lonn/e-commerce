@@ -1,94 +1,110 @@
-// components/store/pwa-install-prompt.tsx
-// Custom PWA install prompt — shows a bottom bar on mobile
+// file: components/store/pwa-install-prompt.tsx
+// purpose: Client component to show PWA install prompt at the bottom of the screen
 
 "use client";
 
-import { useEffect, useState } from "react";
-import { Download, X } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
+import Image from "next/image";
 
-export default function PwaInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isVisible, setIsVisible] = useState(false);
+// Extend the Window interface to include the BeforeInstallPromptEvent
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: Array<string>;
+  readonly userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}
+
+export function PwaInstallPrompt() {
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
-    const handler = (e: any) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
+    // Check if prompt was previously dismissed
+    const isDismissed = localStorage.getItem("pwa_prompt_dismissed");
+    if (isDismissed) {
+      return;
+    }
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
-      // Stash the event so it can be triggered later.
-      setDeferredPrompt(e);
-      
-      // Check if user has dismissed it recently (7 days)
-      const lastDismissed = localStorage.getItem("pwa-dismissed-at");
-      const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-      
-      if (!lastDismissed || parseInt(lastDismissed) < sevenDaysAgo) {
-        setIsVisible(true);
-      }
+      // Stash the event so it can be triggered later
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+      // Update UI notify the user they can install the PWA
+      setShowPrompt(true);
     };
 
-    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    };
   }, []);
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
-    
+
     // Show the install prompt
-    deferredPrompt.prompt();
-    
+    await deferredPrompt.prompt();
+
     // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     if (outcome === "accepted") {
-      console.log("User accepted the PWA install");
-    } else {
-      console.log("User dismissed the PWA install");
+      localStorage.setItem("pwa_prompt_dismissed", "true");
+      setShowPrompt(false);
     }
+    // We don't set it to dismissed if they reject the OS prompt so they can try again later,
+    // unless the requirements specifically want it to never show again after OS rejection.
     
-    // We've used the prompt, and can't use it again
+    // Clear the deferredPrompt so it can only be used once
     setDeferredPrompt(null);
-    setIsVisible(false);
   };
 
   const handleDismiss = () => {
-    setIsVisible(false);
-    localStorage.setItem("pwa-dismissed-at", Date.now().toString());
+    localStorage.setItem("pwa_prompt_dismissed", "true");
+    setShowPrompt(false);
   };
 
-  if (!isVisible) return null;
+  if (!showPrompt) return null;
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-50 animate-in fade-in slide-in-from-bottom-5 duration-500">
-      <div className="bg-card border-2 border-primary/20 shadow-2xl rounded-3xl p-4 md:p-6 flex items-center justify-between gap-4 max-w-lg mx-auto backdrop-blur-md bg-card/95">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-            <Download className="w-6 h-6 text-primary" />
-          </div>
-          <div className="flex flex-col">
-            <p className="font-bold text-sm">Install MiDuka App</p>
-            <p className="text-xs text-muted-foreground">
-              Add to your home screen for a faster shopping experience.
-            </p>
-          </div>
+    <div className="fixed bottom-20 left-4 right-4 z-50 animate-in slide-in-from-bottom-5">
+      <div className="bg-card border border-border rounded-3xl p-4 shadow-lg flex items-center gap-3">
+        {/* Left: Store Icon */}
+        <div className="flex-shrink-0">
+          <Image
+            src="/icons/icon-192.png"
+            alt="MiDuka"
+            width={32}
+            height={32}
+            className="rounded-lg object-cover"
+          />
         </div>
-        
-        <div className="flex items-center gap-2">
-          <Button 
-            onClick={handleInstall}
-            className="rounded-2xl text-xs h-9 px-4 shadow-md"
-          >
+
+        {/* Centre: Text */}
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium truncate">Add MiDuka to your home screen</p>
+          <p className="text-xs text-muted-foreground truncate">Shop faster, offline support</p>
+        </div>
+
+        {/* Right: Actions */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Button onClick={handleInstall} size="sm" className="rounded-full px-4 text-sm h-8">
             Install
           </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
             onClick={handleDismiss}
-            className="rounded-full h-8 w-8 text-muted-foreground hover:text-foreground"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
           >
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
+            <span className="sr-only">Dismiss</span>
           </Button>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { SessionProvider } from "@/components/providers/session-provider";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
+import { PwaInstallPrompt } from "@/components/store/pwa-install-prompt";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -23,6 +24,9 @@ export const metadata: Metadata = {
   },
   formatDetection: {
     telephone: false,
+  },
+  icons: {
+    apple: "/icons/icon-192.png",
   },
 };
 
@@ -57,6 +61,7 @@ export default function RootLayout({
         <SessionProvider>
           {children}
           <Toaster position="bottom-right" />
+          <PwaInstallPrompt />
         </SessionProvider>
       </body>
     </html>
