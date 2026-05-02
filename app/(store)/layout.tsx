@@ -7,7 +7,7 @@ import MobileBottomNav from "@/components/store/mobile-bottom-nav";
 import CartProvider from "@/components/store/cart-provider";
 import CartDrawer from "@/components/store/cart-drawer";
 import WishlistProvider from "@/components/store/wishlist-provider";
-import PwaInstallPrompt from "@/components/store/pwa-install-prompt";
+import { PwaInstallPrompt } from "@/components/store/pwa-install-prompt";
 import { ChatWidget } from "@/components/store/chat-widget";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";

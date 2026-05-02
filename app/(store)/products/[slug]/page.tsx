@@ -132,6 +132,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
     createdAt: product.createdAt.toISOString(),
     updatedAt: product.updatedAt.toISOString(),
+    images: product.images.map((img) => ({
+      ...img,
+      createdAt: img.createdAt.toISOString(),
+    })),
     variants: product.variants.map((v) => ({
       ...v,
       priceOverride: v.priceOverride ? Number(v.priceOverride) : null,

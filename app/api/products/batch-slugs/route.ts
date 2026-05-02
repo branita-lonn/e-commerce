@@ -25,8 +25,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       include: {
         category: { select: { id: true, name: true, slug: true } },
         images: {
-          select: { id: true, url: true, altText: true, sortOrder: true },
+          select: { id: true, url: true, altText: true, sortOrder: true, blurDataUrl: true },
           orderBy: { sortOrder: "asc" },
+        },
+        reviews: {
+          select: { rating: true }
         },
         variants: {
           where: { isActive: true },
@@ -66,6 +69,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         images: p.images.map((img) => ({
           id: img.id,
           url: img.url,
+          blurDataUrl: img.blurDataUrl,
           altText: img.altText,
           sortOrder: img.sortOrder,
         })),
@@ -79,6 +83,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           sku: v.sku,
           isActive: v.isActive,
         })),
+        reviewCount: p.reviews.length,
+        rating: p.reviews.length > 0 
+          ? p.reviews.reduce((acc, r) => acc + r.rating, 0) / p.reviews.length 
+          : 0,
       });
     }
 

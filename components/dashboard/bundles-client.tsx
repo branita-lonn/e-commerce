@@ -74,7 +74,7 @@ export function BundlesClient({ initialBundles, products }: BundlesClientProps) 
   const [loading, setLoading] = useState(false);
 
   const form = useForm<BundleFormValues>({
-    resolver: zodResolver(bundleSchema),
+    resolver: zodResolver(bundleSchema) as any,
     defaultValues: {
       name: "",
       type: "BUY_X_GET_PERCENT_OFF",

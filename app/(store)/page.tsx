@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: settings?.storeName || "MiDuka",
     description: settings?.storeTagline || "Your neighbourhood store, online.",
     openGraph: {
-      images: [settings?.heroImageUrl || settings?.storeLogoUrl || "/icons/icon-512.png"],
+      images: [settings?.heroImageUrl || settings?.logoUrl || "/icons/icon-512.png"],
     },
   };
 }

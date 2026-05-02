@@ -182,7 +182,7 @@ export function ReviewForm({ productId, onSuccess, onCancel, initialData }: Revi
             <FormItem>
               <FormLabel>Title (Optional)</FormLabel>
               <FormControl>
-                <Input placeholder="Sum up your experience" {...field} className="rounded-2xl" />
+                <Input placeholder="Sum up your experience" {...field} value={field.value || ""} className="rounded-2xl" />
               </FormControl>
               <FormMessage />
             </FormItem>

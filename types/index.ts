@@ -116,6 +116,7 @@ export const productWithRelations = Prisma.validator<Prisma.ProductDefaultArgs>(
     category: true,
     images: true,
     variants: true,
+    flashSale: true,
   },
 });
 
@@ -123,12 +124,24 @@ export type ProductWithRelations = Prisma.ProductGetPayload<typeof productWithRe
   completenessScore?: number;
 };
 
-export type ProductWithRelationsSerialized = Omit<ProductWithRelations, "price" | "compareAtPrice" | "variants"> & {
+export type ProductWithRelationsSerialized = Omit<ProductWithRelations, "price" | "compareAtPrice" | "variants" | "createdAt" | "updatedAt" | "images" | "flashSale"> & {
   price: number;
   compareAtPrice: number | null;
-  variants: (Omit<ProductWithRelations["variants"][number], "priceOverride"> & {
-    priceOverride: number | null;
+  createdAt: string;
+  updatedAt: string;
+  images: (Omit<ProductWithRelations["images"][number], "createdAt"> & {
+    createdAt: string;
   })[];
+  variants: (Omit<ProductWithRelations["variants"][number], "priceOverride" | "createdAt" | "updatedAt"> & {
+    priceOverride: number | null;
+    createdAt: string;
+    updatedAt: string;
+  })[];
+  flashSale: (Omit<Exclude<ProductWithRelations["flashSale"], null>, "salePrice" | "startTime" | "endTime"> & {
+    salePrice: number;
+    startTime: string;
+    endTime: string;
+  }) | null;
 };
 
 export interface VariantInput {

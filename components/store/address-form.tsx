@@ -60,7 +60,7 @@ export default function AddressForm({ initialData, onSubmit }: AddressFormProps)
   const [loading, setLoading] = useState(false);
 
   const form = useForm<AddressFormValues>({
-    resolver: zodResolver(addressSchema),
+    resolver: zodResolver(addressSchema) as any,
     defaultValues: initialData || {
       fullName: "",
       phone: "",

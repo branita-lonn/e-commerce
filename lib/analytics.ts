@@ -111,19 +111,19 @@ export async function getDashboardAnalytics(period: DashboardPeriod = "30d") {
   };
 
   // 5. Top Products
-  const productStats: Record<string, { name: string; slug: string; revenue: number; units: number; image?: string }> = {};
+  const productStats: Record<string, { name: string; slug: string; revenue: number; unitsSold: number; image?: string }> = {};
   orderItems.forEach(item => {
     if (!productStats[item.productId]) {
       productStats[item.productId] = {
         name: item.productName,
         slug: item.product?.slug || "",
         revenue: 0,
-        units: 0,
+        unitsSold: 0,
         image: item.product?.images[0]?.url
       };
     }
     productStats[item.productId].revenue += Number(item.total);
-    productStats[item.productId].units += item.quantity;
+    productStats[item.productId].unitsSold += item.quantity;
   });
 
   const topProductsByRevenue = Object.entries(productStats)
@@ -133,7 +133,7 @@ export async function getDashboardAnalytics(period: DashboardPeriod = "30d") {
 
   const topProductsByUnits = Object.entries(productStats)
     .map(([id, stats]) => ({ productId: id, ...stats }))
-    .sort((a, b) => b.units - a.units)
+    .sort((a, b) => b.unitsSold - a.unitsSold)
     .slice(0, 5);
 
   // 6. Conversion Funnel

@@ -29,18 +29,6 @@ module.exports = {
     
     const paths = [];
     
-    products.forEach((product) => {
-      paths.push(await config.transform(config, `/products/${product.slug}`));
-      paths[paths.length - 1].changefreq = 'weekly';
-      paths[paths.length - 1].priority = 0.8;
-      paths[paths.length - 1].lastmod = product.updatedAt.toISOString();
-    });
-    
-    categories.forEach((category) => {
-      // transform returns a promise in next-sitemap, but wait, next-sitemap additionalPaths should just return array of objects or use config.transform
-      // Actually, returning standard objects is easier.
-    });
-
     await prisma.$disconnect();
     
     const finalPaths = [];

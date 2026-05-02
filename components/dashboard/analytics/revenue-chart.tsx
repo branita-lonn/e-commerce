@@ -12,7 +12,7 @@ interface RevenueChartProps {
   data: { date: string; value: number }[];
 }
 
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-background border border-border p-3 rounded-2xl shadow-xl">

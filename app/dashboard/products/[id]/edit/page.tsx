@@ -27,6 +27,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
           orderBy: { sortOrder: "asc" },
         },
         variants: true,
+        flashSale: true,
       },
     }),
     prisma.category.findMany({
@@ -55,10 +56,24 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
     ...product,
     price: Number(product.price),
     compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+    images: product.images.map((img) => ({
+      ...img,
+      createdAt: img.createdAt.toISOString(),
+    })),
     variants: product.variants.map((v) => ({
       ...v,
       priceOverride: v.priceOverride ? Number(v.priceOverride) : null,
+      createdAt: v.createdAt.toISOString(),
+      updatedAt: v.updatedAt.toISOString(),
     })),
+    flashSale: product.flashSale ? {
+      ...product.flashSale,
+      salePrice: Number(product.flashSale.salePrice),
+      startTime: product.flashSale.startTime.toISOString(),
+      endTime: product.flashSale.endTime.toISOString(),
+    } : null,
   } : null;
 
   return (

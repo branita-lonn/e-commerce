@@ -67,7 +67,7 @@ export function GiftCardsClient({ initialGiftCards }: GiftCardsClientProps) {
   const [isExporting, setIsExporting] = useState(false);
 
   const form = useForm<GiftCardFormValues>({
-    resolver: zodResolver(giftCardSchema),
+    resolver: zodResolver(giftCardSchema) as any,
     defaultValues: {
       initialValue: 0,
       code: "",

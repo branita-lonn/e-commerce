@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const storeName = settings?.storeName || "MiDuka";
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const ogImageUrl = `${appUrl}/api/og?title=${encodeURIComponent(category.name)}&subtitle=${encodeURIComponent("Category")}${settings?.storeLogoUrl ? `&image=${encodeURIComponent(settings.storeLogoUrl)}` : ""}`;
+  const ogImageUrl = `${appUrl}/api/og?title=${encodeURIComponent(category.name)}&subtitle=${encodeURIComponent("Category")}${settings?.logoUrl ? `&image=${encodeURIComponent(settings.logoUrl)}` : ""}`;
 
   return {
     title: `${category.name} — Browse ${storeName}`,

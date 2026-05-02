@@ -50,9 +50,7 @@ export default function WishlistPage() {
   const handleAddToCart = (product: any) => {
     addItem({
       productId: product.id,
-      name: product.name,
-      price: Number(product.price),
-      image: product.images[0]?.url,
+      productName: product.name,
       quantity: 1,
     });
   };
@@ -108,6 +106,7 @@ export default function WishlistPage() {
                 price={Number(product.price)}
                 compareAtPrice={product.compareAtPrice ? Number(product.compareAtPrice) : null}
                 primaryImage={product.images[0]?.url}
+                blurDataUrl={product.images[0]?.blurDataUrl}
                 isOnSale={product.isOnSale}
                 stockQuantity={product.stockQuantity}
                 createdAt={product.createdAt}

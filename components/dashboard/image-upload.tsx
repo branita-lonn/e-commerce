@@ -187,7 +187,7 @@ export function ImageUpload({
               <div className="px-1 py-1">
                 <Select
                   value={img.colour || "none"}
-                  onValueChange={(val) => updateImageColour(index, val)}
+                  onValueChange={(val) => updateImageColour(index, val || "none")}
                 >
                   <SelectTrigger className="h-8 text-[10px] bg-background/50 border-none shadow-none focus:ring-0">
                     <div className="flex items-center gap-2 overflow-hidden">

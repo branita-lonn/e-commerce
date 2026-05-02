@@ -8,11 +8,13 @@ import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { CheckCircle, MessageSquare, Star, ThumbsDown, ThumbsUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { differenceInDays } from "date-fns";
+import { ReviewWithRelations } from "@/types";
 
 interface ReviewCardProps {
   review: ReviewWithRelations;

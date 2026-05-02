@@ -131,7 +131,7 @@ export function ReviewsClient({ initialReviews }: ReviewsClientProps) {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="max-w-xs rounded-xl"
         />
-        <Select value={ratingFilter} onValueChange={setRatingFilter}>
+        <Select value={ratingFilter} onValueChange={(val) => setRatingFilter(val || "all")}>
           <SelectTrigger className="w-[150px] rounded-xl">
             <SelectValue placeholder="Rating" />
           </SelectTrigger>

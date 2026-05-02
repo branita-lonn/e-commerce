@@ -28,6 +28,7 @@ export default async function ProductsPage() {
         orderBy: { sortOrder: "asc" },
       },
       variants: true,
+      flashSale: true,
     },
     orderBy: { createdAt: "desc" },
   });
@@ -36,11 +37,25 @@ export default async function ProductsPage() {
     ...product,
     price: Number(product.price),
     compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+    images: product.images.map((img) => ({
+      ...img,
+      createdAt: img.createdAt.toISOString(),
+    })),
     variants: product.variants.map((v) => ({
       ...v,
       priceOverride: v.priceOverride ? Number(v.priceOverride) : null,
+      createdAt: v.createdAt.toISOString(),
+      updatedAt: v.updatedAt.toISOString(),
     })),
-    completenessScore: computeCompleteness(product as ProductWithRelations),
+    flashSale: product.flashSale ? {
+      ...product.flashSale,
+      salePrice: Number(product.flashSale.salePrice),
+      startTime: product.flashSale.startTime.toISOString(),
+      endTime: product.flashSale.endTime.toISOString(),
+    } : null,
+    completenessScore: computeCompleteness(product as any),
   }));
 
   const featuredCount = products.filter(p => p.isFeatured).length;
@@ -49,7 +64,6 @@ export default async function ProductsPage() {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <ProductsClient 
         initialProducts={productsWithScore} 
-        featuredCount={featuredCount}
       />
     </div>
   );

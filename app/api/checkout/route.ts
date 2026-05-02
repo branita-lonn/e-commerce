@@ -159,7 +159,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           paymentStatus: PaymentStatus.PENDING,
           couponId: validCouponId,
           couponCode: validCouponId ? couponCode : null,
-          giftCardCode: validGiftCardId ? giftCardCode.toUpperCase() : null,
+          giftCardCode: (validGiftCardId && giftCardCode) ? giftCardCode.toUpperCase() : null,
           giftCardDiscount: giftCardDiscount,
           items: {
             create: cart.items.map(item => {

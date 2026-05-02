@@ -131,7 +131,7 @@ export function ReviewsSection({
         <h3 className="font-semibold">{total} Reviews</h3>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Sort by:</span>
-          <Select value={sort} onValueChange={(val) => { setSort(val); setPage(1); }}>
+          <Select value={sort} onValueChange={(val) => { setSort(val || "newest"); setPage(1); }}>
             <SelectTrigger className="w-[160px] h-9 rounded-xl border-none bg-muted/50 focus:ring-0">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>

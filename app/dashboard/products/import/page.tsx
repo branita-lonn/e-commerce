@@ -226,7 +226,7 @@ export default function ProductImportPage() {
                   <span>Processing batch...</span>
                   <span>Keep this page open</span>
                 </div>
-                <Progress value={undefined} className="h-1" />
+                <Progress value={null} className="h-1" />
               </div>
             )}
           </CardContent>

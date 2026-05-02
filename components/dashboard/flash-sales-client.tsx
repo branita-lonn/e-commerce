@@ -83,7 +83,7 @@ export function FlashSalesClient({ initialFlashSales, products }: FlashSalesClie
   const [loading, setLoading] = useState(false);
 
   const form = useForm<FlashSaleFormValues>({
-    resolver: zodResolver(flashSaleSchema),
+    resolver: zodResolver(flashSaleSchema) as any,
     defaultValues: {
       productId: "",
       salePrice: 0,
