@@ -4,11 +4,11 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import ProductCard from "@/components/store/product-card";
-import { ProductWithRelations } from "@/types";
+import { ProductCardProps } from "@/types";
 
 interface HomepageSectionProps {
   title: string;
-  products: ProductWithRelations[];
+  products: ProductCardProps[];
   viewAllHref: string;
 }
 
@@ -39,24 +39,7 @@ export default function HomepageSection({
         <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 snap-x">
           {products.map((product) => (
             <div key={product.id} className="min-w-[260px] md:min-w-0 snap-start">
-              <ProductCard
-                id={product.id}
-                slug={product.slug}
-                name={product.name}
-                price={Number(product.price)}
-                compareAtPrice={product.compareAtPrice ? Number(product.compareAtPrice) : undefined}
-                primaryImage={product.images?.[0]?.url}
-                isOnSale={product.isOnSale}
-                stockQuantity={product.stockQuantity}
-                createdAt={product.createdAt}
-                flashSale={product.flashSale ? {
-                  ...product.flashSale,
-                  salePrice: Number(product.flashSale.salePrice)
-                } : undefined}
-                // Assume these are available or default to 0
-                rating={0} 
-                reviewCount={0}
-              />
+              <ProductCard {...product} />
             </div>
           ))}
         </div>

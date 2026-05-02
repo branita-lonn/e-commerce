@@ -35,11 +35,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { InlineConfirmDelete } from "@/components/dashboard/inline-confirm-delete";
 import { formatCurrency, cn } from "@/lib/utils";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const bundleSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  discountPrice: z.coerce.number().positive("Price must be positive"),
-  productIds: z.array(z.string()).min(2, "Select at least 2 products"),
+  type: z.enum(["BUY_X_GET_Y_FREE", "BUY_X_GET_PERCENT_OFF"]),
+  buyQuantity: z.coerce.number().min(1, "Must buy at least 1"),
+  getQuantity: z.coerce.number().optional(),
+  discountPercent: z.coerce.number().optional(),
+  productIds: z.array(z.string()).min(1, "Select at least 1 product"),
 });
 
 type BundleFormValues = z.infer<typeof bundleSchema>;
@@ -53,7 +57,10 @@ interface Product {
 interface Bundle {
   id: string;
   name: string;
-  discountPrice: number;
+  type: "BUY_X_GET_Y_FREE" | "BUY_X_GET_PERCENT_OFF";
+  buyQuantity: number;
+  getQuantity: number | null;
+  discountPercent: number | null;
   products: Product[];
 }
 
@@ -70,20 +77,24 @@ export function BundlesClient({ initialBundles, products }: BundlesClientProps) 
     resolver: zodResolver(bundleSchema),
     defaultValues: {
       name: "",
-      discountPrice: 0,
+      type: "BUY_X_GET_PERCENT_OFF",
+      buyQuantity: 2,
+      getQuantity: undefined,
+      discountPercent: 10,
       productIds: [],
     },
   });
 
   const selectedProductIds = form.watch("productIds");
-  const selectedProducts = products.filter((p) => selectedProductIds.includes(p.id));
-  const totalOriginalPrice = selectedProducts.reduce((sum, p) => sum + p.price, 0);
+  const selectedType = form.watch("type");
 
   const onSubmit = async (values: BundleFormValues) => {
-    if (values.discountPrice >= totalOriginalPrice) {
-      form.setError("discountPrice", { 
-        message: "Bundle price must be lower than the sum of individual prices" 
-      });
+    if (values.type === "BUY_X_GET_Y_FREE" && (!values.getQuantity || values.getQuantity < 1)) {
+      form.setError("getQuantity", { message: "Please enter a valid free quantity" });
+      return;
+    }
+    if (values.type === "BUY_X_GET_PERCENT_OFF" && (!values.discountPercent || values.discountPercent < 1)) {
+      form.setError("discountPercent", { message: "Please enter a valid discount percent" });
       return;
     }
 
@@ -161,10 +172,91 @@ export function BundlesClient({ initialBundles, products }: BundlesClientProps) 
 
                 <FormField
                   control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Bundle Type</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="BUY_X_GET_PERCENT_OFF" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Buy X get Y% off
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="BUY_X_GET_Y_FREE" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Buy X get Y free
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="buyQuantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Buy Quantity</FormLabel>
+                        <FormControl>
+                          <Input type="number" min={1} className="rounded-full" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {selectedType === "BUY_X_GET_PERCENT_OFF" ? (
+                    <FormField
+                      control={form.control}
+                      name="discountPercent"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Discount %</FormLabel>
+                          <FormControl>
+                            <Input type="number" min={1} max={100} className="rounded-full" {...field} value={field.value || ""} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  ) : (
+                    <FormField
+                      control={form.control}
+                      name="getQuantity"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Free Quantity</FormLabel>
+                          <FormControl>
+                            <Input type="number" min={1} className="rounded-full" {...field} value={field.value || ""} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                </div>
+
+                <FormField
+                  control={form.control}
                   name="productIds"
                   render={() => (
                     <FormItem>
-                      <FormLabel>Select Products (min 2)</FormLabel>
+                      <FormLabel>Select Products (min 1)</FormLabel>
                       <FormControl>
                         <ScrollArea className="h-[200px] rounded-2xl border p-4">
                           <div className="space-y-3">
@@ -201,31 +293,6 @@ export function BundlesClient({ initialBundles, products }: BundlesClientProps) 
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="discountPrice"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bundle Price (KES)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="e.g. 1500"
-                          className="rounded-full"
-                          {...field}
-                        />
-                      </FormControl>
-                      {selectedProductIds.length >= 2 && (
-                        <FormDescription className="flex items-center gap-1 text-primary font-medium">
-                          <Info className="h-3 w-3" />
-                          Individual total: {formatCurrency(totalOriginalPrice)}
-                        </FormDescription>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <Button type="submit" className="w-full rounded-full" disabled={loading}>
                   {loading ? "Creating..." : "Create Bundle Deal"}
                 </Button>
@@ -248,21 +315,19 @@ export function BundlesClient({ initialBundles, products }: BundlesClientProps) 
                   <TableRow>
                     <TableHead>Bundle Name</TableHead>
                     <TableHead>Products</TableHead>
-                    <TableHead>Individual Sum</TableHead>
-                    <TableHead>Bundle Price</TableHead>
+                    <TableHead>Rule</TableHead>
                     <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {initialBundles.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
                         No bundles found.
                       </TableCell>
                     </TableRow>
                   ) : (
                     initialBundles.map((bundle) => {
-                      const sum = bundle.products.reduce((acc, p) => acc + p.price, 0);
                       return (
                         <TableRow key={bundle.id}>
                           <TableCell className="font-bold">
@@ -275,11 +340,10 @@ export function BundlesClient({ initialBundles, products }: BundlesClientProps) 
                               ))}
                             </ul>
                           </TableCell>
-                          <TableCell className="text-muted-foreground line-through">
-                            {formatCurrency(sum)}
-                          </TableCell>
                           <TableCell className="text-primary font-bold">
-                            {formatCurrency(bundle.discountPrice)}
+                            {bundle.type === "BUY_X_GET_Y_FREE" 
+                              ? `Buy ${bundle.buyQuantity}, Get ${bundle.getQuantity} Free`
+                              : `Buy ${bundle.buyQuantity}, Get ${bundle.discountPercent}% Off`}
                           </TableCell>
                           <TableCell className="text-right">
                             <InlineConfirmDelete onDelete={() => handleDelete(bundle.id)} />

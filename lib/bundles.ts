@@ -14,38 +14,40 @@ interface CartItem {
  * A bundle is applied when all its products are present in the cart.
  * The discount is (Sum of individual prices) - (Bundle discountPrice).
  */
+/**
+ * Calculates the total savings from bundle deals in a cart.
+ */
 export async function calculateBundleSavings(items: CartItem[]) {
-  if (items.length < 2) return 0;
+  if (items.length === 0) return 0;
 
   // Fetch all active bundles
   const bundles = await prisma.bundle.findMany({
-    include: {
-      products: {
-        select: {
-          id: true,
-          price: true,
-        }
-      }
-    }
+    where: { isActive: true }
   });
 
   let totalSavings = 0;
-  const productIdsInCart = new Set(items.map(item => item.productId));
+  const cartProductMap = new Map(items.map(item => [item.productId, item]));
 
   for (const bundle of bundles) {
-    const bundleProductIds = bundle.products.map(p => p.id);
-    
     // Check if all bundle products are in the cart
-    const hasAllProducts = bundleProductIds.every(id => productIdsInCart.has(id));
+    const bundleProductsInCart = bundle.productIds
+      .map(id => cartProductMap.get(id))
+      .filter((item): item is CartItem => !!item);
 
-    if (hasAllProducts) {
-      // Calculate individual prices sum
-      const individualPricesSum = bundle.products.reduce((sum, p) => sum + Number(p.price), 0);
-      const bundlePrice = Number(bundle.discountPrice);
+    if (bundleProductsInCart.length === bundle.productIds.length) {
+      // Find the minimum quantity among bundle products to see how many times the bundle applies
+      const minQty = Math.min(...bundleProductsInCart.map(item => item.quantity));
       
-      const savings = individualPricesSum - bundlePrice;
-      if (savings > 0) {
-        totalSavings += savings;
+      if (minQty >= bundle.buyQuantity) {
+        if (bundle.type === "BUY_X_GET_Y_FREE" && bundle.getQuantity) {
+          // For simplicity, we assume the cheapest item is free or just use the price of the first item
+          // More advanced logic would find the cheapest item among the set
+          const cheapestPrice = Math.min(...bundleProductsInCart.map(item => item.price));
+          totalSavings += cheapestPrice * bundle.getQuantity * Math.floor(minQty / bundle.buyQuantity);
+        } else if (bundle.type === "BUY_X_GET_PERCENT_OFF" && bundle.discountPercent) {
+          const totalBundleValue = bundleProductsInCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+          totalSavings += (totalBundleValue * bundle.discountPercent) / 100;
+        }
       }
     }
   }
@@ -57,27 +59,39 @@ export async function calculateBundleSavings(items: CartItem[]) {
  * Finds bundles that include a specific product to show as suggestions.
  */
 export async function getBundlesForProduct(productId: string) {
-  return await prisma.bundle.findMany({
+  const bundles = await prisma.bundle.findMany({
     where: {
-      products: {
-        some: {
-          id: productId
-        }
-      }
-    },
-    include: {
-      products: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          price: true,
-          images: {
-            take: 1,
-            orderBy: { sortOrder: 'asc' }
-          }
-        }
+      isActive: true,
+      productIds: {
+        has: productId
       }
     }
   });
+
+  // Fetch product details for each bundle manually
+  return await Promise.all(bundles.map(async (bundle) => {
+    const products = await prisma.product.findMany({
+      where: {
+        id: { in: bundle.productIds }
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        price: true,
+        images: {
+          take: 1,
+          orderBy: { sortOrder: 'asc' }
+        }
+      }
+    });
+
+    return {
+      ...bundle,
+      products: products.map(p => ({
+        ...p,
+        price: Number(p.price)
+      }))
+    };
+  }));
 }

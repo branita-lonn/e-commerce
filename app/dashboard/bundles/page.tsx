@@ -19,22 +19,6 @@ export default async function BundlesPage() {
     redirect("/auth/login");
   }
 
-  // Fetch all bundles
-  const bundles = await prisma.bundle.findMany({
-    include: {
-      products: {
-        select: {
-          id: true,
-          name: true,
-          price: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
   // Fetch all active products
   const products = await prisma.product.findMany({
     where: {
@@ -50,15 +34,24 @@ export default async function BundlesPage() {
     },
   });
 
-  // Serialize Decimals
-  const serializedBundles = bundles.map((b) => ({
-    ...b,
-    discountPrice: Number(b.discountPrice),
-    products: b.products.map((p) => ({
-      ...p,
-      price: Number(p.price),
-    })),
-  }));
+  // Fetch all bundles
+  const bundles = await prisma.bundle.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  // Serialize Decimals and map products
+  const serializedBundles = bundles.map((b) => {
+    const bundleProducts = products.filter(p => b.productIds.includes(p.id));
+    return {
+      ...b,
+      products: bundleProducts.map((p) => ({
+        ...p,
+        price: Number(p.price),
+      })),
+    };
+  });
 
   const serializedProducts = products.map((p) => ({
     ...p,
@@ -68,7 +61,7 @@ export default async function BundlesPage() {
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <BundlesClient 
-        initialBundles={serializedBundles} 
+        initialBundles={serializedBundles as any} 
         products={serializedProducts} 
       />
     </div>

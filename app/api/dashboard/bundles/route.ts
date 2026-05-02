@@ -14,15 +14,6 @@ export async function GET() {
     }
 
     const bundles = await prisma.bundle.findMany({
-      include: {
-        products: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-          }
-        }
-      },
       orderBy: {
         createdAt: "desc",
       }
@@ -44,26 +35,25 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, discountPrice, productIds } = body;
+    const { name, type, buyQuantity, getQuantity, discountPercent, productIds, isActive } = body;
 
-    if (!name || !discountPrice || !productIds || !Array.isArray(productIds)) {
+    if (!name || !type || !buyQuantity || !productIds || !Array.isArray(productIds)) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
-    if (productIds.length < 2) {
-      return new NextResponse("A bundle must have at least 2 products", { status: 400 });
+    if (productIds.length < 1) {
+      return new NextResponse("A bundle must have at least 1 product", { status: 400 });
     }
 
     const bundle = await prisma.bundle.create({
       data: {
         name,
-        discountPrice,
-        products: {
-          connect: productIds.map((id: string) => ({ id })),
-        }
-      },
-      include: {
-        products: true
+        type,
+        buyQuantity,
+        getQuantity: getQuantity || null,
+        discountPercent: discountPercent || null,
+        productIds,
+        isActive: isActive !== undefined ? isActive : true,
       }
     });
 

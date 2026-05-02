@@ -43,6 +43,8 @@ export function ProductsClient({ initialProducts }: { initialProducts: ProductWi
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const featuredCount = initialProducts.filter((p) => p.isFeatured).length;
+
   const toggleSelectAll = () => {
     if (selectedIds.size === filteredProducts.length) {
       setSelectedIds(new Set());

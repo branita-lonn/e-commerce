@@ -88,7 +88,7 @@ export default function ProductCard({
             </Badge>
           )}
           {isNew && !isOnSale && !activeFlashSale && (
-            <Badge className="text-xs font-bold px-2 py-0.5">New</Badge>
+            <Badge className="text-xs font-bold px-2 py-0.5 bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 border-none shadow-sm">New</Badge>
           )}
         </div>
 
@@ -98,7 +98,7 @@ export default function ProductCard({
           className={cn(
             "absolute top-2 right-2 p-1.5 rounded-full backdrop-blur-sm transition-all duration-200 border border-border/50",
             wishlisted 
-              ? "bg-primary text-primary-foreground opacity-100" 
+              ? "bg-red-50 text-red-500 opacity-100 dark:bg-red-900/40 dark:text-red-400 border-red-200 dark:border-red-800" 
               : "bg-background/80 text-muted-foreground opacity-0 group-hover:opacity-100"
           )}
           onClick={(e) => {
