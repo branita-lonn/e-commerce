@@ -10,7 +10,6 @@ import WishlistProvider from "@/components/store/wishlist-provider";
 import { PwaInstallPrompt } from "@/components/store/pwa-install-prompt";
 import { ChatWidget } from "@/components/store/chat-widget";
 import { prisma } from "@/lib/prisma";
-import { hexToHsl, getContrastColor } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 
@@ -43,8 +42,6 @@ export default async function StoreLayout({
   });
 
   const accentColor = settings?.accentColor || "#3B82F6";
-  const primaryHsl = hexToHsl(accentColor);
-  const primaryForegroundHsl = getContrastColor(accentColor);
   const fontClass = settings?.fontChoice === "POPPINS" ? "font-poppins" : 
                     settings?.fontChoice === "LATO" ? "font-lato" :
                     settings?.fontChoice === "NUNITO" ? "font-nunito" : "font-sans";
@@ -54,10 +51,7 @@ export default async function StoreLayout({
       <WishlistProvider>
         <div 
           className={cn("min-h-screen flex flex-col bg-background", fontClass)}
-          style={{ 
-            "--primary": primaryHsl,
-            "--primary-foreground": primaryForegroundHsl 
-          } as React.CSSProperties}
+          style={{ "--primary": accentColor } as React.CSSProperties}
         >
         <StoreHeaderServer />
         <CartDrawer />

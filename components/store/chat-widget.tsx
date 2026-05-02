@@ -76,6 +76,7 @@ export function ChatWidget({ storeName }: { storeName: string }) {
 
       setIsStreaming(true);
       const reader = response.body?.getReader();
+      let assistantContent = "";
 
       // Add a placeholder assistant message that we will update
       setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
@@ -89,14 +90,11 @@ export function ChatWidget({ storeName }: { storeName: string }) {
           if (chunk.includes("[ERROR: AI_ALL_PROVIDERS_FAILED]")) {
               throw new Error("AI_ALL_PROVIDERS_FAILED");
           }
-          
-          const nextChunk = chunk;
+          assistantContent += chunk;
+
           setMessages((prev) => {
             const newMessages = [...prev];
-            const last = newMessages[newMessages.length - 1];
-            if (last) {
-              last.content = last.content + nextChunk;
-            }
+            newMessages[newMessages.length - 1].content = assistantContent;
             return newMessages;
           });
         }
@@ -133,15 +131,15 @@ export function ChatWidget({ storeName }: { storeName: string }) {
           )}
         >
           {/* Header */}
-          <div className="flex items-center justify-between bg-card border-b p-4 text-foreground">
+          <div className="flex items-center justify-between bg-primary p-4 text-primary-foreground">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
+              <Sparkles className="h-5 w-5" />
               <span className="font-semibold">{storeName} Assistant</span>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+              className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/10"
               onClick={() => setIsOpen(false)}
             >
               <X className="h-5 w-5" />
@@ -160,15 +158,15 @@ export function ChatWidget({ storeName }: { storeName: string }) {
               >
                 <div
                   className={cn(
-                    "px-4 py-2 text-sm whitespace-pre-wrap shadow-sm transition-colors",
+                    "px-4 py-2 text-sm whitespace-pre-wrap",
                     m.role === "user"
-                      ? "rounded-3xl rounded-tr-none bg-muted text-foreground border border-border/50"
-                      : "rounded-3xl rounded-tl-none bg-card text-foreground border border-border/50"
+                      ? "rounded-3xl rounded-tr-none bg-primary text-primary-foreground"
+                      : "rounded-3xl rounded-tl-none bg-muted text-foreground"
                   )}
                 >
                   {m.content}
                   {isStreaming && i === messages.length - 1 && m.role === "assistant" && (
-                    <span className="ml-1 inline-block h-4 w-1 animate-pulse bg-primary align-middle" />
+                    <span className="ml-1 inline-block h-4 w-1 animate-pulse bg-current align-middle" />
                   )}
                 </div>
               </div>

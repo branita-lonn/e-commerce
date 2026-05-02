@@ -40,20 +40,17 @@ export default function MobileBottomNav() {
               href={href}
               id={`mobile-nav-${label.toLowerCase()}`}
               className={cn(
-                "flex flex-1 flex-col items-center justify-center gap-0.5 text-xs transition-all duration-200",
+                "flex flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium transition-colors",
                 isActive
-                  ? "text-foreground font-bold scale-105"
+                  ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               )}
               aria-current={isActive ? "page" : undefined}
             >
-              <div className="relative flex flex-col items-center">
-                <Icon className={cn("h-5 w-5 transition-transform", isActive && "mb-0.5")} />
-                {isActive && (
-                  <span className="absolute -bottom-1.5 h-1 w-1 rounded-full bg-primary animate-in zoom-in duration-300" />
-                )}
+              <div className="relative">
+                <Icon className="h-5 w-5" />
                 {displayBadge !== undefined && displayBadge > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground shadow-sm">
+                  <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                     {displayBadge > 9 ? "9+" : displayBadge}
                   </span>
                 )}
