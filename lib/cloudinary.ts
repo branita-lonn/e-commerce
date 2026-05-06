@@ -27,3 +27,19 @@ export async function uploadImage(base64: string, folder: string): Promise<{ url
     throw new Error("Cloudinary upload failed with an unknown error.");
   }
 }
+
+/**
+ * Deletes an image from Cloudinary by its public_id.
+ * Silently swallows errors — a missing asset should never block a DB delete.
+ */
+export async function deleteImage(publicId: string): Promise<void> {
+  try {
+    if (!publicId) return;
+    await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+  } catch (error: unknown) {
+    // Log but don't re-throw — Cloudinary cleanup is best-effort
+    if (error instanceof Error) {
+      console.error(`[CLOUDINARY_DELETE_ERROR] ${error.message}`);
+    }
+  }
+}

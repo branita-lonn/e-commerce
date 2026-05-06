@@ -6,6 +6,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { UserRole } from "@prisma/client";
 import * as z from "zod";
+import { deleteImage } from "@/lib/cloudinary";
 
 const updateSlideSchema = z.object({
   headline: z.string().max(120).optional().nullable(),
@@ -86,6 +87,9 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Fetch slide first so we have publicIds for Cloudinary cleanup
+    const slide = await prisma.heroSlide.findUnique({ where: { id } });
+
     await prisma.$transaction(async (tx) => {
       await tx.heroSlide.delete({
         where: { id },
@@ -103,6 +107,10 @@ export async function DELETE(
         });
       }
     });
+
+    // Delete from Cloudinary after DB transaction succeeds (best-effort, won't throw)
+    if (slide?.desktopPublicId) await deleteImage(slide.desktopPublicId);
+    if (slide?.mobilePublicId) await deleteImage(slide.mobilePublicId);
 
     return new NextResponse(null, { status: 204 });
   } catch (error: unknown) {

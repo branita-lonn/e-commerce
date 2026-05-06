@@ -18,6 +18,7 @@ import {
 
 interface ImageData {
   url: string;
+  publicId?: string | null;
   colour?: string | null;
   blurDataUrl?: string | null;
 }
@@ -92,7 +93,7 @@ export function ImageUpload({
         }
 
         const data = await response.json();
-        newImages.push({ url: data.url, colour: null, blurDataUrl: data.blurDataUrl });
+        newImages.push({ url: data.url, publicId: data.publicId || null, colour: null, blurDataUrl: data.blurDataUrl });
       }
 
       if (newImages.length > 0) {

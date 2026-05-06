@@ -62,6 +62,31 @@ const slideSchema = z.object({
 
 type SlideFormValues = z.infer<typeof slideSchema>;
 
+// Helper to extract opacity % from rgba string
+function getOpacityFromRgba(rgba?: string | null): number {
+  if (!rgba) return 35;
+  const match = rgba.match(/rgba\(0,0,0,([\d.]+)\)/);
+  return match ? Math.round(parseFloat(match[1]) * 100) : 35;
+}
+
+function buildDefaults(slide?: HeroSlideData): SlideFormValues {
+  return {
+    headline: slide?.headline || "",
+    subheadline: slide?.subheadline || "",
+    ctaText: slide?.ctaText || "",
+    ctaLink: slide?.ctaLink || "",
+    desktopImageUrl: slide?.desktopImageUrl || "",
+    mobileImageUrl: slide?.mobileImageUrl || "",
+    desktopPublicId: slide?.desktopPublicId || "",
+    mobilePublicId: slide?.mobilePublicId || "",
+    overlayColor: slide?.overlayColor || "rgba(0,0,0,0.35)",
+    textAlign: (slide?.textAlign as "left" | "center" | "right") || "left",
+    duration: slide?.duration ?? null,
+    isActive: slide?.isActive ?? true,
+    sortOrder: slide?.sortOrder ?? 0,
+  };
+}
+
 interface HeroSlideFormProps {
   slide?: HeroSlideData;
   onSuccess: () => void;
@@ -71,40 +96,27 @@ interface HeroSlideFormProps {
 
 export function HeroSlideForm({ slide, onSuccess, onClose, open }: HeroSlideFormProps) {
   const [loading, setLoading] = useState(false);
+  const [overlayOpacity, setOverlayOpacity] = useState(getOpacityFromRgba(slide?.overlayColor));
 
   const form = useForm<SlideFormValues>({
     resolver: zodResolver(slideSchema) as any,
-    defaultValues: {
-      headline: slide?.headline || "",
-      subheadline: slide?.subheadline || "",
-      ctaText: slide?.ctaText || "",
-      ctaLink: slide?.ctaLink || "",
-      desktopImageUrl: slide?.desktopImageUrl || "",
-      mobileImageUrl: slide?.mobileImageUrl || "",
-      desktopPublicId: slide?.desktopPublicId || "",
-      mobilePublicId: slide?.mobilePublicId || "",
-      overlayColor: slide?.overlayColor || "rgba(0,0,0,0.35)",
-      textAlign: (slide?.textAlign as "left" | "center" | "right") || "left",
-      duration: slide?.duration || null,
-      isActive: slide?.isActive ?? true,
-      sortOrder: slide?.sortOrder ?? 0,
-    } as any, // Use any here to avoid strict type mismatch with zod inferred types
+    defaultValues: buildDefaults(slide),
   });
 
-  // Extract opacity from rgba string for the slider
-  const getInitialOpacity = (rgba?: string | null) => {
-    if (!rgba) return 35;
-    const match = rgba.match(/rgba\(0,0,0,([\d.]+)\)/);
-    return match ? Math.round(parseFloat(match[1]) * 100) : 35;
-  };
-
-  const [overlayOpacity, setOverlayOpacity] = useState(getInitialOpacity(slide?.overlayColor));
+  // ─── Re-initialise form whenever the slide prop changes (Edit vs. Create) ─
+  useEffect(() => {
+    if (open) {
+      form.reset(buildDefaults(slide) as any);
+      setOverlayOpacity(getOpacityFromRgba(slide?.overlayColor));
+    }
+  }, [open, slide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const values = useWatch({ control: form.control });
 
+  // Keep the hidden overlayColor field in sync with the slider
   useEffect(() => {
     form.setValue("overlayColor", `rgba(0,0,0,${overlayOpacity / 100})`);
-  }, [overlayOpacity, form]);
+  }, [overlayOpacity]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSubmit = async (data: SlideFormValues) => {
     setLoading(true);
@@ -136,16 +148,16 @@ export function HeroSlideForm({ slide, onSuccess, onClose, open }: HeroSlideForm
 
   return (
     <Sheet open={open} onOpenChange={(val) => !val && onClose()}>
-      <SheetContent className="sm:max-w-xl overflow-y-auto flex flex-col w-full sm:max-w-md p-0">
-        <SheetHeader className="px-6 py-4 border-b border-border flex flex-col items-center justify-between">
-          <SheetTitle className="text-lg font-bold flex items-center gap-2">{slide ? "Edit Slide" : "Add New Slide"}</SheetTitle>
+      <SheetContent className="sm:max-w-xl overflow-y-auto rounded-l-3xl">
+        <SheetHeader>
+          <SheetTitle>{slide ? "Edit Slide" : "Add New Slide"}</SheetTitle>
           <SheetDescription>
             Configure your hero slide content and images.
           </SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-8 py-6 flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+          <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-8 py-6 px-1">
             <div className="space-y-6">
               {/* Images Section */}
               <div className="grid grid-cols-1 gap-6">
@@ -160,9 +172,15 @@ export function HeroSlideForm({ slide, onSuccess, onClose, open }: HeroSlideForm
                       </FormDescription>
                       <FormControl>
                         <ImageUpload
-                          value={field.value ? [{ url: field.value }] : []}
-                          onChange={(images) => field.onChange(images[0]?.url || "")}
-                          onRemove={() => field.onChange("")}
+                          value={field.value ? [{ url: field.value, publicId: form.getValues("desktopPublicId") }] : []}
+                          onChange={(images) => {
+                            field.onChange(images[0]?.url || "");
+                            form.setValue("desktopPublicId", images[0]?.publicId || "");
+                          }}
+                          onRemove={() => {
+                            field.onChange("");
+                            form.setValue("desktopPublicId", "");
+                          }}
                           maxImages={1}
                           folder="miduka/hero/desktop"
                         />
@@ -183,9 +201,15 @@ export function HeroSlideForm({ slide, onSuccess, onClose, open }: HeroSlideForm
                       </FormDescription>
                       <FormControl>
                         <ImageUpload
-                          value={field.value ? [{ url: field.value }] : []}
-                          onChange={(images) => field.onChange(images[0]?.url || "")}
-                          onRemove={() => field.onChange("")}
+                          value={field.value ? [{ url: field.value, publicId: form.getValues("mobilePublicId") }] : []}
+                          onChange={(images) => {
+                            field.onChange(images[0]?.url || "");
+                            form.setValue("mobilePublicId", images[0]?.publicId || "");
+                          }}
+                          onRemove={() => {
+                            field.onChange("");
+                            form.setValue("mobilePublicId", "");
+                          }}
                           maxImages={1}
                           folder="miduka/hero/mobile"
                         />

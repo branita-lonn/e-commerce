@@ -236,141 +236,143 @@ export function HeroSlideManager({ slides, settings }: HeroSlideManagerProps) {
       </div>
 
       {/* Slide List */}
-      <div className="grid gap-4">
-        {localSlides.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 rounded-3xl border border-dashed text-center space-y-4">
-            <div className="bg-muted p-4 rounded-full">
-              <LayoutTemplate className="h-8 w-8 text-muted-foreground/40" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-semibold">No hero slides yet</h3>
-              <p className="text-sm text-muted-foreground max-w-xs">
-                Add your first slide to create a beautiful rotating banner for your store.
-              </p>
-            </div>
-            <Button 
-              variant="outline"
-              onClick={() => {
-                setEditingSlide(undefined);
-                setIsFormOpen(true);
-              }}
-              className="rounded-full"
-            >
-              Add Your First Slide
-            </Button>
-          </div>
-        ) : (
-          localSlides.map((slide, index) => (
-            <div
-              key={slide.id}
-              draggable
-              onDragStart={() => onDragStart(index)}
-              onDragOver={(e) => onDragOver(e, index)}
-              onDrop={onDrop}
-              className={cn(
-                "group relative flex items-center gap-4 p-4 rounded-3xl border bg-card shadow-sm transition-all duration-200",
-                draggedIndex === index ? "opacity-50 border-primary" : "hover:shadow-md hover:border-primary/20",
-                !slide.isActive && "bg-muted/30 opacity-75 grayscale-[0.5]"
-              )}
-            >
-              {/* Drag Handle */}
-              <div className="flex items-center gap-2">
-                <div className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors p-1">
-                  <GripVertical className="h-5 w-5" />
-                </div>
-                <Badge variant="outline" className="h-6 w-6 rounded-full flex items-center justify-center p-0 text-[10px] font-bold">
-                  {index + 1}
-                </Badge>
+      <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+        <div className="grid gap-4 min-w-[600px] md:min-w-0">
+          {localSlides.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 rounded-3xl border border-dashed text-center space-y-4">
+              <div className="bg-muted p-4 rounded-full">
+                <LayoutTemplate className="h-8 w-8 text-muted-foreground/40" />
               </div>
-
-              {/* Thumbnails */}
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col gap-1 items-center">
-                  <div className="relative aspect-[16/5] w-32 rounded-xl overflow-hidden border bg-muted">
-                    <Image src={slide.desktopImageUrl} alt="Desktop" fill className="object-cover" sizes="128px" />
-                  </div>
-                  <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">Desktop</span>
-                </div>
-                <div className="flex flex-col gap-1 items-center">
-                  <div className="relative aspect-[4/5] w-12 rounded-xl overflow-hidden border bg-muted">
-                    <Image src={slide.mobileImageUrl} alt="Mobile" fill className="object-cover" sizes="48px" />
-                  </div>
-                  <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">Mobile</span>
-                </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold">No hero slides yet</h3>
+                <p className="text-sm text-muted-foreground max-w-xs">
+                  Add your first slide to create a beautiful rotating banner for your store.
+                </p>
               </div>
-
-              {/* Content Summary */}
-              <div className="flex-1 min-w-0 px-2">
-                {slide.headline || slide.subheadline ? (
-                  <div className="space-y-0.5">
-                    <h4 className="font-semibold text-sm truncate">{slide.headline || "No headline"}</h4>
-                    <p className="text-xs text-muted-foreground truncate">{slide.subheadline || "No subheadline"}</p>
-                    {slide.ctaText && (
-                      <Badge variant="outline" className="mt-1 text-[10px] h-5 rounded-full border-primary/20 bg-primary/5 text-primary">
-                        {slide.ctaText}
-                      </Badge>
-                    )}
-                  </div>
-                ) : (
-                  <span className="text-xs italic text-muted-foreground">No text overlay</span>
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  setEditingSlide(undefined);
+                  setIsFormOpen(true);
+                }}
+                className="rounded-full"
+              >
+                Add Your First Slide
+              </Button>
+            </div>
+          ) : (
+            localSlides.map((slide, index) => (
+              <div
+                key={slide.id}
+                draggable
+                onDragStart={() => onDragStart(index)}
+                onDragOver={(e) => onDragOver(e, index)}
+                onDrop={onDrop}
+                className={cn(
+                  "group relative flex items-center gap-4 p-4 rounded-3xl border bg-card shadow-sm transition-all duration-200",
+                  draggedIndex === index ? "opacity-50 border-primary" : "hover:shadow-md hover:border-primary/20",
+                  !slide.isActive && "bg-muted/30 opacity-75 grayscale-[0.5]"
                 )}
-              </div>
-
-              {/* Controls */}
-              <div className="flex items-center gap-2 px-2">
-                <div className="flex items-center gap-2 pr-4 border-r">
-                  <span className="text-[10px] font-medium uppercase text-muted-foreground">Active</span>
-                  <Switch 
-                    checked={slide.isActive} 
-                    onCheckedChange={() => toggleActive(slide.id, slide.isActive)}
-                  />
-                </div>
-                
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => {
-                    setEditingSlide(slide);
-                    setIsFormOpen(true);
-                  }}
-                  className="h-9 w-9 rounded-full hover:bg-primary/5 hover:text-primary"
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-
-                {deletingId === slide.id ? (
-                  <div className="flex items-center gap-1">
-                    <Button 
-                      variant="destructive" 
-                      size="sm" 
-                      className="rounded-full h-8 px-3 text-xs"
-                      onClick={() => handleDelete(slide.id)}
-                    >
-                      Confirm?
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 rounded-full"
-                      onClick={() => setDeletingId(null)}
-                    >
-                      <XCircle className="h-4 w-4" />
-                    </Button>
+              >
+                {/* Drag Handle */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors p-1">
+                    <GripVertical className="h-5 w-5" />
                   </div>
-                ) : (
+                  <Badge variant="outline" className="h-6 w-6 rounded-full flex items-center justify-center p-0 text-[10px] font-bold">
+                    {index + 1}
+                  </Badge>
+                </div>
+
+                {/* Thumbnails */}
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex flex-col gap-1 items-center">
+                    <div className="relative aspect-[16/5] w-32 rounded-xl overflow-hidden border bg-muted">
+                      <Image src={slide.desktopImageUrl} alt="Desktop" fill className="object-cover" sizes="128px" />
+                    </div>
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">Desktop</span>
+                  </div>
+                  <div className="flex flex-col gap-1 items-center">
+                    <div className="relative aspect-[4/5] w-12 rounded-xl overflow-hidden border bg-muted">
+                      <Image src={slide.mobileImageUrl} alt="Mobile" fill className="object-cover" sizes="48px" />
+                    </div>
+                    <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">Mobile</span>
+                  </div>
+                </div>
+
+                {/* Content Summary */}
+                <div className="flex-1 min-w-0 px-2">
+                  {slide.headline || slide.subheadline ? (
+                    <div className="space-y-0.5">
+                      <h4 className="font-semibold text-sm truncate">{slide.headline || "No headline"}</h4>
+                      <p className="text-xs text-muted-foreground truncate">{slide.subheadline || "No subheadline"}</p>
+                      {slide.ctaText && (
+                        <Badge variant="outline" className="mt-1 text-[10px] h-5 rounded-full border-primary/20 bg-primary/5 text-primary">
+                          {slide.ctaText}
+                        </Badge>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-xs italic text-muted-foreground">No text overlay</span>
+                  )}
+                </div>
+
+                {/* Controls */}
+                <div className="flex items-center gap-2 px-2 shrink-0">
+                  <div className="flex items-center gap-2 pr-4 border-r">
+                    <span className="text-[10px] font-medium uppercase text-muted-foreground">Active</span>
+                    <Switch 
+                      checked={slide.isActive} 
+                      onCheckedChange={() => toggleActive(slide.id, slide.isActive)}
+                    />
+                  </div>
+                  
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    onClick={() => setDeletingId(slide.id)}
-                    className="h-9 w-9 rounded-full hover:bg-destructive/5 hover:text-destructive"
+                    onClick={() => {
+                      setEditingSlide(slide);
+                      setIsFormOpen(true);
+                    }}
+                    className="h-9 w-9 rounded-full hover:bg-primary/5 hover:text-primary"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Pencil className="h-4 w-4" />
                   </Button>
-                )}
+
+                  {deletingId === slide.id ? (
+                    <div className="flex items-center gap-1">
+                      <Button 
+                        variant="destructive" 
+                        size="sm" 
+                        className="rounded-full h-8 px-3 text-xs"
+                        onClick={() => handleDelete(slide.id)}
+                      >
+                        Confirm?
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 rounded-full"
+                        onClick={() => setDeletingId(null)}
+                      >
+                        <XCircle className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => setDeletingId(slide.id)}
+                      className="h-9 w-9 rounded-full hover:bg-destructive/5 hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
-        )}
+            ))
+          )}
+        </div>
       </div>
 
       <HeroSlideForm 
