@@ -38,7 +38,7 @@ export function DashboardHeader({ userName }: { userName: string }) {
       <Popover>
         <PopoverTrigger
           className={cn(
-            "hidden sm:inline-flex items-center justify-center rounded-full relative",
+            "inline-flex items-center justify-center rounded-full relative",
             "h-9 w-9 border border-transparent bg-transparent",
             "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
             "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
