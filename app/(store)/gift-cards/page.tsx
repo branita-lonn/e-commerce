@@ -60,11 +60,12 @@ export default function GiftCardsPage() {
 
       const data = await res.json();
       
-      // If it's a simulated "success" for demo purposes, or redirect to checkout
-      if (data.url) {
-        window.location.href = data.url;
+      // Redirect to a dedicated gift card success page
+      if (data.id) {
+        toast.info("Payment request sent! Please check your phone.");
+        router.push(`/gift-cards/success/${data.id}`);
       } else {
-        toast.success("Gift card purchase successful!");
+        toast.success("Purchase initialized!");
         router.push("/");
       }
     } catch (error) {

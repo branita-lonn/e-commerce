@@ -82,6 +82,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         }
 
         if (targetEmail) {
+          console.log(`[MPESA_WEBHOOK] Attempting to send gift card email to: ${targetEmail}`);
           const html = await render(
             React.createElement(GiftCardEmail, {
               recipientName: giftCard.recipientName || "Valued Customer",
@@ -93,12 +94,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             })
           );
 
-          await resend.emails.send({
+          const emailResult = await resend.emails.send({
             from: `MiDuka <onboarding@resend.dev>`, // Replace with verified domain in production
             to: targetEmail,
             subject: `Your ${storeName} Gift Card has arrived!`,
             html,
           });
+          console.log(`[MPESA_WEBHOOK] Email sent result:`, emailResult);
+        } else {
+          console.warn(`[MPESA_WEBHOOK] No target email found for gift card ${giftCard.id}`);
         }
       } else {
         await prisma.giftCard.update({
