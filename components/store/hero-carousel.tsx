@@ -10,13 +10,41 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { HeroSlideData } from "@/types";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface HeroCarouselProps {
   slides: HeroSlideData[];
   autoplayInterval?: number;
   enableAutoplay?: boolean;
+}
+
+function HeroVideo({ src, isMuted, isActive }: { src: string; isMuted: boolean; isActive: boolean }) {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
+  React.useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isActive) {
+      video.play().catch(() => {
+        // Autoplay might fail if interaction is required, but muted should work
+      });
+    } else {
+      video.pause();
+    }
+  }, [isActive]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      className="w-full h-full object-cover"
+      muted={isMuted}
+      loop
+      playsInline
+    />
+  );
 }
 
 export function HeroCarousel({ 
@@ -31,6 +59,7 @@ export function HeroCarousel({
 
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [scrollSnaps, setScrollSnaps] = React.useState<number[]>([]);
+  const [isMuted, setIsMuted] = React.useState(true);
 
   const scrollPrev = React.useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
   const scrollNext = React.useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
@@ -67,13 +96,10 @@ export function HeroCarousel({
                 {/* Background Media */}
                 {slide.videoUrl ? (
                   <div className="absolute inset-0">
-                    <video
-                      src={slide.videoUrl}
-                      className="w-full h-full object-cover"
-                      muted
-                      loop
-                      autoPlay
-                      playsInline
+                    <HeroVideo 
+                      src={slide.videoUrl} 
+                      isMuted={isMuted} 
+                      isActive={selectedIndex === index} 
                     />
                   </div>
                 ) : (
@@ -187,6 +213,17 @@ export function HeroCarousel({
             />
           ))}
         </div>
+      )}
+
+      {/* Volume Toggle */}
+      {slides.some(s => s.videoUrl) && (
+        <button
+          onClick={() => setIsMuted(!isMuted)}
+          className="absolute bottom-6 right-6 md:bottom-8 md:right-10 z-30 p-3 rounded-full bg-black/20 backdrop-blur-md border border-white/20 text-white hover:bg-black/40 transition-all shadow-lg active:scale-95"
+          aria-label={isMuted ? "Unmute video" : "Mute video"}
+        >
+          {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+        </button>
       )}
     </section>
   );
