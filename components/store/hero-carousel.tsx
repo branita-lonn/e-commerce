@@ -215,14 +215,14 @@ export function HeroCarousel({
         </div>
       )}
 
-      {/* Volume Toggle */}
-      {slides.some(s => s.videoUrl) && (
+      {/* Volume Toggle — Only show if the current active slide has a video */}
+      {slides[selectedIndex]?.videoUrl && (
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className="absolute bottom-6 right-6 md:bottom-8 md:right-10 z-30 p-3 rounded-full bg-black/20 backdrop-blur-md border border-white/20 text-white hover:bg-black/40 transition-all shadow-lg active:scale-95"
+          className="absolute bottom-6 right-6 md:right-10 z-30 p-1 text-white/80 hover:text-white transition-all active:scale-90"
           aria-label={isMuted ? "Unmute video" : "Mute video"}
         >
-          {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+          {isMuted ? <VolumeX className="h-5 w-5 drop-shadow-md" /> : <Volume2 className="h-5 w-5 drop-shadow-md" />}
         </button>
       )}
     </section>
